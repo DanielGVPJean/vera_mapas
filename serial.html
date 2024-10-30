@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador de Estados de México</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 0;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .search-container {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        #searchInput {
+            flex-grow: 1;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #5b4cc7;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .popup-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1000px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .state-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .state-card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .state-card:hover {
+            transform: translateY(-5px);
+        }
+        .state-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        .state-info {
+            padding: 15px;
+        }
+        .state-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+        }
+        .state-category {
+            font-size: 14px;
+            color: #6c5ce7;
+        }
+        #stateInfo {
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            width: 900px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            background: linear-gradient(to bottom, rgba(58, 49, 133, 0.5), transparent);
+            z-index: 1;
+        }
+
+        #showOnMap {
+            display: none;
+            position: absolute;
+            z-index: 2;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        iframe {
+            position: relative;
+            z-index: 0;
+            width: 100%;
+            height: 90vh;
+            overflow: auto;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">StateSearch</div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Explorador de Estados de México</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar un estado...">
+            <button id="toggleButton">Mostrar Estados</button>
+            <button id="connectSerialButton">Conectar Serial</button>
+        </div>
+        <div id="searchResults" class="state-grid"></div>
+        
+        <div id="stateInfo">
+            <div class="gradient-overlay"></div>
+            <button id="showOnMap" onclick="sendStateId()">Mostrar en el Mapa</button>
+            <iframe src="" width="100%" frameborder="0"></iframe>
+        </div>
+    </div>
+    <div id="statePopup" class="popup">
+        <div class="popup-content">
+            <div id="allStatesList" class="state-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const estados = [
+            {id: 1, nombre: 'Aguascalientes', categoria: 'Integrantes', link: 'https://example.com/aguascalientes', imageUrl: 'img/aguascalientes.jpg'},
+            {id: 2, nombre: 'Baja California', categoria: 'Integrantes', link: 'https://example.com/baja-california', imageUrl: 'img/baja-california.jpg'},
+            {id: 3, nombre: 'Baja California Sur', categoria: 'Integrantes', link: 'https://example.com/baja-california-sur', imageUrl: 'img/baja-california-sur.jpg'},
+            {id: 4, nombre: 'Campeche', categoria: 'Integrantes', link: 'https://example.com/campeche', imageUrl: 'img/campeche.jpg'},
+            {id: 5, nombre: 'Chiapas', categoria: 'Integrantes', link: 'https://example.com/chiapas', imageUrl: 'img/chiapas.jpg'},
+            {id: 6, nombre: 'Chihuahua', categoria: 'Integrantes', link: 'https://example.com/chihuahua', imageUrl: 'img/chihuahua.jpg'},
+            {id: 7, nombre: 'Coahuila', categoria: 'Integrantes', link: 'https://example.com/coahuila', imageUrl: 'img/coahuila.jpg'},
+            {id: 8, nombre: 'Colima', categoria: 'Integrantes', link: 'https://example.com/colima', imageUrl: 'img/colima.jpg'},
+            {id: 9, nombre: 'Durango', categoria: 'Integrantes', link: 'https://example.com/durango', imageUrl: 'img/durango.jpg'},
+            {id: 10, nombre: 'Estado de México', categoria: 'IntegrantesCultura', link: 'https://example.com/estado-de-mexico', imageUrl: 'img/estado-de-méxico.jpg'},
+            {id: 11, nombre: 'Guanajuato', categoria: 'Integrantes', link: 'https://example.com/guanajuato', imageUrl: 'img/guanajuato.jpg'},
+            {id: 12, nombre: 'Guerrero', categoria: 'Integrantes', link: 'https://example.com/guerrero', imageUrl: 'img/guerrero.jpg'},
+            {id: 13, nombre: 'Hidalgo', categoria: 'Integrantes', link: 'https://example.com/hidalgo', imageUrl: 'img/hidalgo.jpg'},
+            {id: 14, nombre: 'Jalisco', categoria: 'Integrantes', link: 'https://example.com/jalisco', imageUrl: 'img/jalisco.jpg'},
+            {id: 15, nombre: 'Michoacán', categoria: 'Integrantes', link: 'https://example.com/michoacan', imageUrl: 'img/michoacán.jpg'},
+            {id: 16, nombre: 'Morelos', categoria: 'Integrantes', link: 'https://example.com/morelos', imageUrl: 'img/morelos.jpg'},
+            {id: 17, nombre: 'Nayarit', categoria: 'Integrantes', link: 'https://example.com/nayarit', imageUrl: 'img/nayarit.jpg'},
+            {id: 18, nombre: 'Nuevo León', categoria: 'Integrantes', link: 'https://example.com/nuevo-leon', imageUrl: 'img/nuevo-león.jpg'},
+            {id: 19, nombre: 'Oaxaca', categoria: 'Integrantes', link: 'https://example.com/oaxaca', imageUrl: 'img/oaxaca.jpg'},
+            {id: 20, nombre: 'Puebla', categoria: 'Integrantes', link: 'https://example.com/puebla', imageUrl: 'img/puebla.jpg'},
+            {id: 21, nombre: 'Querétaro', categoria: 'Integrantes', link: 'https://example.com/queretaro', imageUrl: 'img/querétaro.jpg'},
+            {id: 22, nombre: 'Quintana Roo', categoria: 'Integrantes', link: 'https://example.com/quintana-roo', imageUrl: 'img/quintana-roo.jpg'},
+            {id: 23, nombre: 'San Luis Potosí', categoria: 'Integrantes', link: 'https://example.com/san-luis-potosi', imageUrl: 'img/san-luis-potosí.jpg'},
+            {id: 24, nombre: 'Sinaloa', categoria: 'Integrantes', link: 'https://example.com/sinaloa', imageUrl: 'img/sinaloa.jpg'},
+            {id: 25, nombre: 'Sonora', categoria: 'Integrantes', link: 'https://example.com/sonora', imageUrl: 'img/sonora.jpg'},
+            {id: 26, nombre: 'Tabasco', categoria: 'Integrantes', link: 'https://example.com/tabasco', imageUrl: 'img/tabasco.jpg'},
+            {id: 27, nombre: 'Tamaulipas', categoria: 'Integrantes', link: 'https://example.com/tamaulipas', imageUrl: 'img/tamaulipas.jpg'},
+            {id: 28, nombre: 'Tlaxcala', categoria: 'Integrantes', link: 'https://example.com/tlaxcala', imageUrl: 'img/tlaxcala.jpg'},
+            {id: 29, nombre: 'Veracruz', categoria: 'Integrantes', link: 'https://example.com/veracruz', imageUrl: 'img/veracruz.jpg'},
+            {id: 30, nombre: 'Yucatán', categoria: 'Integrantes', link: 'https://example.com/yucatan', imageUrl: 'img/yucatán.jpg'},
+            {id: 31, nombre: 'Zacatecas', categoria: 'Integrantes', link: 'https://example.com/zacatecas', imageUrl: 'img/zacatecas.jpg'},
+            {id: 32, nombre: 'Ciudad de México', categoria: 'Integrantes', link: 'https://docs.google.com/document/d/e/2PACX-1vRDU28xo4JQpR_wuMUWKtQ0F3TGNmfRJoUcvH1UmbU7uN7VlL3jMQhWAgO1Wh7K56jl2TlbTyshyjQd/pub?embedded=true', imageUrl: 'img/ciudad-de-méxico.jpg'}
+        ];
+
+        const searchInput = document.getElementById('searchInput');
+        const toggleButton = document.getElementById('toggleButton');
+        const allStatesList = document.getElementById('allStatesList');
+        const searchResults = document.getElementById('searchResults');
+        const stateInfo = document.getElementById('stateInfo');
+        const statePopup = document.getElementById('statePopup');
+        const stateIFrame = stateInfo.querySelector("iframe");
+        const showOnMapButton = document.getElementById('showOnMap');
+        let currentStateId = null;
+
+        function renderStateList(states, container) {
+            container.innerHTML = '';
+            states.forEach(state => {
+                const card = document.createElement('div');
+                card.className = 'state-card';
+                card.innerHTML = `
+                    <img src="${state.imageUrl}" alt="${state.nombre}" class="state-image">
+                    <div class="state-info">
+                        <h3 class="state-name">${state.nombre}</h3>
+                        <p class="state-category">${state.categoria}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => selectState(state));
+                container.appendChild(card);
+            });
+        }
+
+        function selectState(state) {
+            loadStateHTML(state.link);
+            currentStateId = state.id;
+            updateShowOnMapButton(state.nombre);
+            closePopup();
+        }
+
+        function loadStateHTML(link) {
+            stateIFrame.onload = function() {
+                adjustStateInfoHeight();
+            };
+            stateIFrame.src = link;
+        }
+
+        function adjustStateInfoHeight() {
+            setTimeout(() => {
+                const doc = stateIFrame.contentDocument || stateIFrame.contentWindow.document;
+                if (doc && doc.body) {
+                    const newHeight = doc.body.scrollHeight + 'px';
+                    stateIFrame.style.height = newHeight;
+                    stateInfo.style.height = newHeight;
+                }
+            }, 500);
+        }
+
+        function updateShowOnMapButton(stateName) {
+            showOnMapButton.textContent = `Mostrar ${stateName} en el Mapa`;
+            showOnMapButton.style.display = 'block';
+        }
+
+        function sendStateId() {
+            sendToMicrocontroller(currentStateId);
+        }
+
+        function sendToMicrocontroller(stateId) {
+            if (!writer) {
+                console.error("Conexión serial no establecida.");
+                alert("Conexión serial no establecida.");
+                return;
+            }
+
+            try {
+                const data = `${stateId}\r\n`;
+                writer.write(data);
+                console.log(`Envío al microcontrolador: ${data}`);
+            } catch (error) {
+                console.error("Error enviando al microcontrolador: ", error);
+            }
+        }
+
+        function searchStates() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredStates = estados.filter(state => 
+                state.nombre.toLowerCase().includes(searchTerm)
+            );
+            renderStateList(filteredStates, searchResults);
+            searchResults.style.display = searchTerm ? 'grid' : 'none';
+        }
+
+        function togglePopup() {
+            statePopup.style.display = statePopup.style.display === 'none' ? 'block' : 'none';
+            toggleButton.textContent = statePopup.style.display === 'none' ? 'Mostrar Estados' : 'Ocultar Estados';
+        }
+
+        function closePopup() {
+            statePopup.style.display = 'none';
+            toggleButton.textContent = 'Mostrar Estados';
+        }
+
+        toggleButton.addEventListener('click', togglePopup);
+
+        searchInput.addEventListener('input', searchStates);
+
+        statePopup.addEventListener('click', (e) => {
+            if (e.target === statePopup) {
+                closePopup();
+            }
+        });
+
+        renderStateList(estados, allStatesList);
+
+        stateIFrame.src = '';
+
+        statePopup.style.display = 'none';
+        searchResults.style.display = 'none';
+
+        let port;
+        let textEncoder;
+        let writableStreamClosed;
+        let writer;
+
+        document.getElementById('connectSerialButton').addEventListener('click', async () => {
+            try {
+                port = await navigator.serial.requestPort();
+                await port.open({ baudRate: 115200 });
+
+                textEncoder = new TextEncoderStream();
+                writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+                writer = textEncoder.writable.getWriter();
+                console.log("Conexión serial establecida.");
+            } catch (error) {
+                console.error("Error conectando al puerto serial: ", error);
+                alert("Error al conectar con el puerto serial: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

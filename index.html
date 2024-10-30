@@ -50,7 +50,7 @@
             border-radius: 25px;
             outline: none;
         }
-        #toggleButton {
+        button {
             padding: 10px 20px;
             font-size: 16px;
             background-color: #6c5ce7;
@@ -60,7 +60,7 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        #toggleButton:hover {
+        button:hover {
             background-color: #5b4cc7;
         }
         .popup {
@@ -118,12 +118,48 @@
             color: #6c5ce7;
         }
         #stateInfo {
-            margin: 96px auto;
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
             width: 900px;
             background-color: #fff;
-            padding: 96px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 90px;
+            background: linear-gradient(to bottom, rgba(58, 49, 133, 0.5), transparent);
+            z-index: 1;
+        }
+
+        #showOnMap {
+            display: none;
+            position: absolute;
+            z-index: 2;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        iframe {
+            position: relative;
+            z-index: 0;
+            width: 100%;
+            height: 90vh;
+            overflow: auto;
         }
         .hidden {
             display: none;
@@ -145,7 +181,12 @@
             <button id="toggleButton">Mostrar Estados</button>
         </div>
         <div id="searchResults" class="state-grid"></div>
-        <div id="stateInfo"></div>
+        
+        <div id="stateInfo">
+            <div class="gradient-overlay"></div>
+            <button id="showOnMap" onclick="updateEstadoMapa()">Mostrar en el Mapa</button>
+            <iframe src="" width="100%" frameborder="0"></iframe>
+        </div>
     </div>
     <div id="statePopup" class="popup">
         <div class="popup-content">
@@ -153,40 +194,41 @@
         </div>
     </div>
 
+
     <script>
         const estados = [
-            {id: 1, nombre: 'Aguascalientes', categoria: 'Cultura'},
-            {id: 2, nombre: 'Baja California', categoria: 'Naturaleza'},
-            {id: 3, nombre: 'Baja California Sur', categoria: 'Playa'},
-            {id: 4, nombre: 'Campeche', categoria: 'Historia'},
-            {id: 5, nombre: 'Chiapas', categoria: 'Naturaleza'},
-            {id: 6, nombre: 'Chihuahua', categoria: 'Aventura'},
-            {id: 7, nombre: 'Coahuila', categoria: 'Industria'},
-            {id: 8, nombre: 'Colima', categoria: 'Playa'},
-            {id: 9, nombre: 'Durango', categoria: 'Cine'},
-            {id: 10, nombre: 'Estado de México', categoria: 'Cultura'},
-            {id: 11, nombre: 'Guanajuato', categoria: 'Colonial'},
-            {id: 12, nombre: 'Guerrero', categoria: 'Playa'},
-            {id: 13, nombre: 'Hidalgo', categoria: 'Magia'},
-            {id: 14, nombre: 'Jalisco', categoria: 'Tradición'},
-            {id: 15, nombre: 'Michoacán', categoria: 'Artesanía'},
-            {id: 16, nombre: 'Morelos', categoria: 'Balnearios'},
-            {id: 17, nombre: 'Nayarit', categoria: 'Playa'},
-            {id: 18, nombre: 'Nuevo León', categoria: 'Negocios'},
-            {id: 19, nombre: 'Oaxaca', categoria: 'Gastronomía'},
-            {id: 20, nombre: 'Puebla', categoria: 'Arquitectura'},
-            {id: 21, nombre: 'Querétaro', categoria: 'Vino'},
-            {id: 22, nombre: 'Quintana Roo', categoria: 'Turismo'},
-            {id: 23, nombre: 'San Luis Potosí', categoria: 'Aventura'},
-            {id: 24, nombre: 'Sinaloa', categoria: 'Gastronomía'},
-            {id: 25, nombre: 'Sonora', categoria: 'Desierto'},
-            {id: 26, nombre: 'Tabasco', categoria: 'Naturaleza'},
-            {id: 27, nombre: 'Tamaulipas', categoria: 'Frontera'},
-            {id: 28, nombre: 'Tlaxcala', categoria: 'Cultura'},
-            {id: 29, nombre: 'Veracruz', categoria: 'Puerto'},
-            {id: 30, nombre: 'Yucatán', categoria: 'Maya'},
-            {id: 31, nombre: 'Zacatecas', categoria: 'Minería'},
-            {id: 32, nombre: 'Ciudad de México', categoria: 'Metrópoli'}
+            {id: 1, nombre: 'Aguascalientes', categoria: 'Integrantes', link: 'https://example.com/aguascalientes', imageUrl: 'img/aguascalientes.jpg'},
+            {id: 2, nombre: 'Baja California', categoria: 'Integrantes', link: 'https://example.com/baja-california', imageUrl: 'img/baja-california.jpg'},
+            {id: 3, nombre: 'Baja California Sur', categoria: 'Integrantes', link: 'https://example.com/baja-california-sur', imageUrl: 'img/baja-california-sur.jpg'},
+            {id: 4, nombre: 'Campeche', categoria: 'Integrantes', link: 'https://example.com/campeche', imageUrl: 'img/campeche.jpg'},
+            {id: 5, nombre: 'Chiapas', categoria: 'Integrantes', link: 'https://example.com/chiapas', imageUrl: 'img/chiapas.jpg'},
+            {id: 6, nombre: 'Chihuahua', categoria: 'Integrantes', link: 'https://example.com/chihuahua', imageUrl: 'img/chihuahua.jpg'},
+            {id: 7, nombre: 'Coahuila', categoria: 'Integrantes', link: 'https://example.com/coahuila', imageUrl: 'img/coahuila.jpg'},
+            {id: 8, nombre: 'Colima', categoria: 'Integrantes', link: 'https://example.com/colima', imageUrl: 'img/colima.jpg'},
+            {id: 9, nombre: 'Durango', categoria: 'Integrantes', link: 'https://example.com/durango', imageUrl: 'img/durango.jpg'},
+            {id: 10, nombre: 'Estado de México', categoria: 'IntegrantesCultura', link: 'https://example.com/estado-de-mexico', imageUrl: 'img/estado-de-méxico.jpg'},
+            {id: 11, nombre: 'Guanajuato', categoria: 'Integrantes', link: 'https://example.com/guanajuato', imageUrl: 'img/guanajuato.jpg'},
+            {id: 12, nombre: 'Guerrero', categoria: 'Integrantes', link: 'https://example.com/guerrero', imageUrl: 'img/guerrero.jpg'},
+            {id: 13, nombre: 'Hidalgo', categoria: 'Integrantes', link: 'https://example.com/hidalgo', imageUrl: 'img/hidalgo.jpg'},
+            {id: 14, nombre: 'Jalisco', categoria: 'Integrantes', link: 'https://example.com/jalisco', imageUrl: 'img/jalisco.jpg'},
+            {id: 15, nombre: 'Michoacán', categoria: 'Integrantes', link: 'https://example.com/michoacan', imageUrl: 'img/michoacán.jpg'},
+            {id: 16, nombre: 'Morelos', categoria: 'Integrantes', link: 'https://example.com/morelos', imageUrl: 'img/morelos.jpg'},
+            {id: 17, nombre: 'Nayarit', categoria: 'Integrantes', link: 'https://example.com/nayarit', imageUrl: 'img/nayarit.jpg'},
+            {id: 18, nombre: 'Nuevo León', categoria: 'Integrantes', link: 'https://example.com/nuevo-leon', imageUrl: 'img/nuevo-león.jpg'},
+            {id: 19, nombre: 'Oaxaca', categoria: 'Integrantes', link: 'https://example.com/oaxaca', imageUrl: 'img/oaxaca.jpg'},
+            {id: 20, nombre: 'Puebla', categoria: 'Integrantes', link: 'https://example.com/puebla', imageUrl: 'img/puebla.jpg'},
+            {id: 21, nombre: 'Querétaro', categoria: 'Integrantes', link: 'https://example.com/queretaro', imageUrl: 'img/querétaro.jpg'},
+            {id: 22, nombre: 'Quintana Roo', categoria: 'Integrantes', link: 'https://example.com/quintana-roo', imageUrl: 'img/quintana-roo.jpg'},
+            {id: 23, nombre: 'San Luis Potosí', categoria: 'Integrantes', link: 'https://example.com/san-luis-potosi', imageUrl: 'img/san-luis-potosí.jpg'},
+            {id: 24, nombre: 'Sinaloa', categoria: 'Integrantes', link: 'https://example.com/sinaloa', imageUrl: 'img/sinaloa.jpg'},
+            {id: 25, nombre: 'Sonora', categoria: 'Integrantes', link: 'https://example.com/sonora', imageUrl: 'img/sonora.jpg'},
+            {id: 26, nombre: 'Tabasco', categoria: 'Integrantes', link: 'https://example.com/tabasco', imageUrl: 'img/tabasco.jpg'},
+            {id: 27, nombre: 'Tamaulipas', categoria: 'Integrantes', link: 'https://example.com/tamaulipas', imageUrl: 'img/tamaulipas.jpg'},
+            {id: 28, nombre: 'Tlaxcala', categoria: 'Integrantes', link: 'https://example.com/tlaxcala', imageUrl: 'img/tlaxcala.jpg'},
+            {id: 29, nombre: 'Veracruz', categoria: 'Integrantes', link: 'https://example.com/veracruz', imageUrl: 'img/veracruz.jpg'},
+            {id: 30, nombre: 'Yucatán', categoria: 'Integrantes', link: 'https://example.com/yucatan', imageUrl: 'img/yucatán.jpg'},
+            {id: 31, nombre: 'Zacatecas', categoria: 'Integrantes', link: 'https://example.com/zacatecas', imageUrl: 'img/zacatecas.jpg'},
+            {id: 32, nombre: 'Ciudad de México', categoria: 'Integrantes', link: 'https://docs.google.com/document/d/e/2PACX-1vRDU28xo4JQpR_wuMUWKtQ0F3TGNmfRJoUcvH1UmbU7uN7VlL3jMQhWAgO1Wh7K56jl2TlbTyshyjQd/pub?embedded=true', imageUrl: 'img/ciudad-de-méxico.jpg'}
         ];
 
         const searchInput = document.getElementById('searchInput');
@@ -195,6 +237,9 @@
         const searchResults = document.getElementById('searchResults');
         const stateInfo = document.getElementById('stateInfo');
         const statePopup = document.getElementById('statePopup');
+        const stateIFrame = stateInfo.querySelector("iframe");
+        const showOnMapButton = document.getElementById('showOnMap');
+        let currentStateId = null;
 
         function renderStateList(states, container) {
             container.innerHTML = '';
@@ -202,7 +247,7 @@
                 const card = document.createElement('div');
                 card.className = 'state-card';
                 card.innerHTML = `
-                    <img src="${state.nombre.toLowerCase().replace(/ /g, '-')}.jpg" alt="${state.nombre}" class="state-image">
+                    <img src="${state.imageUrl}" alt="${state.nombre}" class="state-image">
                     <div class="state-info">
                         <h3 class="state-name">${state.nombre}</h3>
                         <p class="state-category">${state.categoria}</p>
@@ -214,24 +259,36 @@
         }
 
         function selectState(state) {
-            loadStateHTML(state.nombre.toLowerCase().replace(/ /g, '-'));
-            sendToMicrocontroller(state.id);
+            loadStateHTML(state.link);
+            currentStateId = state.id;
+            updateShowOnMapButton(state.nombre);
             closePopup();
         }
 
-        async function loadStateHTML(stateName) {
-            try {
-                const response = await fetch(`${stateName}.html`);
-                const html = await response.text();
-                stateInfo.innerHTML = html;
-            } catch (error) {
-                console.error('Error al cargar el archivo HTML:', error);
-                stateInfo.innerHTML = '<p>Error al cargar la información del estado.</p>';
-            }
+        function loadStateHTML(link) {
+            stateIFrame.src = link;
         }
 
-        function sendToMicrocontroller(stateId) {
-            console.log(`Enviando ID del estado ${stateId} al microcontrolador`);
+
+        function updateShowOnMapButton(stateName) {
+            showOnMapButton.textContent = `Mostrar ${stateName} en el Mapa`;
+            showOnMapButton.style.display = 'block';
+        }
+
+        async function updateEstadoMapa() {
+            const response = await fetch('estadoMapa.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ estadoId: currentStateId })
+            });
+            const result = await response.json();
+            if (result.success) {
+                console.log(`Estado del mapa actualizado: ${currentStateId}`);
+            } else {
+                console.error('Error al actualizar el estado del mapa', result.message);
+            }
         }
 
         function searchStates() {
@@ -254,23 +311,15 @@
         }
 
         toggleButton.addEventListener('click', togglePopup);
-
         searchInput.addEventListener('input', searchStates);
-
-        // Close popup when clicking outside
         statePopup.addEventListener('click', (e) => {
             if (e.target === statePopup) {
                 closePopup();
             }
         });
 
-        // Initialize the list of all states
         renderStateList(estados, allStatesList);
-
-        // Simulate state data for demonstration
-        stateInfo.innerHTML = '<h2>Selecciona un estado para ver su información</h2>';
-
-        // Ensure popup is hidden on page load
+        stateIFrame.src = '';
         statePopup.style.display = 'none';
         searchResults.style.display = 'none';
     </script>

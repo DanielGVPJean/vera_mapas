@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sender de Serial</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 0;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #5b4cc7;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">StateSearch</div>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Enviar Estados al Mapa</h1>
+        <button id="connectSerialButton">Conectar Microbit</button>
+    </div>
+    <script>
+        let port;
+        let textEncoder;
+        let writer;
+
+        document.getElementById('connectSerialButton').addEventListener('click', async () => {
+            try {
+                port = await navigator.serial.requestPort();
+                await port.open({ baudRate: 115200 });
+
+                textEncoder = new TextEncoderStream();
+                const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+                writer = textEncoder.writable.getWriter();
+                console.log("Conexión serial establecida.");
+
+                // Aquí inicia el intervalo para enviar datos constantemente
+                setInterval(async () => {
+                    const response = await fetch('estadoMapa.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ get: true }) // Solicitamos el primer Id
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        const message = `${data.estadoId}\r\n`; // Agregar nueva línea
+                        await writer.write(message);
+                        console.log(`Enviando: ${message}`);
+                    } else {
+                        console.log(data.message); // Mensaje cuando la cola está vacía
+                    }
+                }, 1000); // Envía cada segundo
+
+            } catch (error) {
+                console.error("Error conectando al puerto serial: ", error);
+                alert("Error al conectar con el puerto serial: " + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
