@@ -133,11 +133,6 @@
             margin-bottom: 20px;
         }
 
-        @media (max-width: 768px) {
-            .state-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Reducir a la mitad en pantallas móviles */
-            }
-        }
         .state-card {
             background-color: #fff;
             border-radius: 10px;
@@ -165,6 +160,18 @@
         .state-category {
             font-size: 14px;
             color: #6c5ce7;
+        }
+        @media (max-width: 768px) {
+            .state-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Reducir a la mitad en pantallas móviles */
+            }
+            .state-name {
+                font-size: 12px; /* Tamaño del texto adaptado para móviles */
+            }
+
+            .state-category {
+                font-size: 8px; /* Tamaño del texto de la categoría adaptado para móviles */
+            }
         }
         #stateInfo {
             display: none; /* Ocultar inicialmente */
