@@ -123,11 +123,25 @@
             position: relative;
             margin-left: auto;
             margin-right: auto;
-            width: 900px;
+            max-width: 900px; /* Ancho máximo en pantallas grandes */
+            width: 100%; /* Utiliza el 100% del ancho en pantallas pequeñas */
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            #stateInfo {
+                max-width: 100%; /* Opcionalmente puedes usar 100% o ajustarlo según sea necesario */
+            }
+
+            .container {
+                padding: 10px; /* Reducir padding en dispositivos más pequeños */
+            }
+
+            h1 {
+                font-size: 24px; /* Ajustar el tamaño de texto para mejor lectura */
+            }
         }
 
         .gradient-overlay {
