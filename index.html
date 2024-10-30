@@ -206,13 +206,13 @@
             right: 0;
             height: 90px;
             background: linear-gradient(to bottom, rgba(58, 49, 133, 0.5), transparent);
-            z-index: 1;
+            z-index: 2;
         }
 
         #showOnMap {
             display: none;
             position: absolute;
-            z-index: 2;
+            z-index: 3;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
@@ -223,6 +223,47 @@
             border: none;
             border-radius: 25px;
             cursor: pointer;
+        }
+
+        .placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.8;
+            max-width: 100%;
+            min-height: 100%;
+            background-color: #eee;
+            z-index: 1;
+        }
+
+        @keyframes moveGradient {
+            0% {
+                background-position: 100% 0; /* Comienza desde la derecha */
+            }
+            50% {
+                background-position: 0 0; /* Se mueve hacia la izquierda */
+            }
+            100% {
+                background-position: 100% 0; /* Regresa a la derecha */
+            }
+        }
+
+        .animated-background {
+            position: relative;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            animation-duration: 2s; /* Duración de la animación */
+            animation-fill-mode: forwards;
+            animation-iteration-count: infinite; /* Repetir infinitamente */
+            animation-name: moveGradient;
+            animation-timing-function: linear;
+            background: linear-gradient(to right, #ffffff 0%, #d7d7d7 35%, #ffffff 70%);
+            background-size: 200% 100%; /* Tamaño del fondo para permitir el movimiento */
+            height: 100%;
         }
 
         iframe {
@@ -256,6 +297,9 @@
         
         <div id="stateInfo">
             <div class="gradient-overlay"></div>
+            <div class="placeholder" id="placeholder">
+                <div class="animated-background"></div>
+              </div>
             <button id="showOnMap" onclick="updateEstadoMapa()">Mostrar en el Mapa</button>
             <iframe src="" width="100%" frameborder="0"></iframe>
         </div>
@@ -268,178 +312,190 @@
 
 
     <script>
-        const estados = [
-            {id: 1, nombre: 'Aguascalientes', categoria: 'Integrantes', link: 'https://example.com/aguascalientes', imageUrl: 'img_min/aguascalientes.jpg'},
-            {id: 2, nombre: 'Baja California', categoria: 'Integrantes', link: 'https://example.com/baja-california', imageUrl: 'img_min/baja-california.jpg'},
-            {id: 3, nombre: 'Baja California Sur', categoria: 'Integrantes', link: 'https://example.com/baja-california-sur', imageUrl: 'img_min/baja-california-sur.jpg'},
-            {id: 4, nombre: 'Campeche', categoria: 'Integrantes', link: 'https://example.com/campeche', imageUrl: 'img_min/campeche.jpg'},
-            {id: 5, nombre: 'Chiapas', categoria: 'Integrantes', link: 'https://example.com/chiapas', imageUrl: 'img_min/chiapas.jpg'},
-            {id: 6, nombre: 'Chihuahua', categoria: 'Integrantes', link: 'https://example.com/chihuahua', imageUrl: 'img_min/chihuahua.jpg'},
-            {id: 7, nombre: 'Coahuila', categoria: 'Integrantes', link: 'https://example.com/coahuila', imageUrl: 'img_min/coahuila.jpg'},
-            {id: 8, nombre: 'Colima', categoria: 'Integrantes', link: 'https://example.com/colima', imageUrl: 'img_min/colima.jpg'},
-            {id: 9, nombre: 'Durango', categoria: 'Integrantes', link: 'https://example.com/durango', imageUrl: 'img_min/durango.jpg'},
-            {id: 10, nombre: 'Estado de México', categoria: 'Integrantes', link: 'https://example.com/estado-de-mexico', imageUrl: 'img_min/estado-de-méxico.jpg'},
-            {id: 11, nombre: 'Guanajuato', categoria: 'Integrantes', link: 'https://example.com/guanajuato', imageUrl: 'img_min/guanajuato.jpg'},
-            {id: 12, nombre: 'Guerrero', categoria: 'Integrantes', link: 'https://example.com/guerrero', imageUrl: 'img_min/guerrero.jpg'},
-            {id: 13, nombre: 'Hidalgo', categoria: 'Integrantes', link: 'https://example.com/hidalgo', imageUrl: 'img_min/hidalgo.jpg'},
-            {id: 14, nombre: 'Jalisco', categoria: 'Integrantes', link: 'https://example.com/jalisco', imageUrl: 'img_min/jalisco.jpg'},
-            {id: 15, nombre: 'Michoacán', categoria: 'Integrantes', link: 'https://example.com/michoacan', imageUrl: 'img_min/michoacán.jpg'},
-            {id: 16, nombre: 'Morelos', categoria: 'Integrantes', link: 'https://example.com/morelos', imageUrl: 'img_min/morelos.jpg'},
-            {id: 17, nombre: 'Nayarit', categoria: 'Integrantes', link: 'https://example.com/nayarit', imageUrl: 'img_min/nayarit.jpg'},
-            {id: 18, nombre: 'Nuevo León', categoria: 'Integrantes', link: 'https://example.com/nuevo-leon', imageUrl: 'img_min/nuevo-león.jpg'},
-            {id: 19, nombre: 'Oaxaca', categoria: 'Integrantes', link: 'https://example.com/oaxaca', imageUrl: 'img_min/oaxaca.jpg'},
-            {id: 20, nombre: 'Puebla', categoria: 'Integrantes', link: 'https://example.com/puebla', imageUrl: 'img_min/puebla.jpg'},
-            {id: 21, nombre: 'Querétaro', categoria: 'Integrantes', link: 'https://example.com/queretaro', imageUrl: 'img_min/querétaro.jpg'},
-            {id: 22, nombre: 'Quintana Roo', categoria: 'Integrantes', link: 'https://example.com/quintana-roo', imageUrl: 'img_min/quintana-roo.jpg'},
-            {id: 23, nombre: 'San Luis Potosí', categoria: 'Integrantes', link: 'https://example.com/san-luis-potosi', imageUrl: 'img_min/san-luis-potosí.jpg'},
-            {id: 24, nombre: 'Sinaloa', categoria: 'Integrantes', link: 'https://example.com/sinaloa', imageUrl: 'img_min/sinaloa.jpg'},
-            {id: 25, nombre: 'Sonora', categoria: 'Integrantes', link: 'https://example.com/sonora', imageUrl: 'img_min/sonora.jpg'},
-            {id: 26, nombre: 'Tabasco', categoria: 'Integrantes', link: 'https://example.com/tabasco', imageUrl: 'img_min/tabasco.jpg'},
-            {id: 27, nombre: 'Tamaulipas', categoria: 'Integrantes', link: 'https://example.com/tamaulipas', imageUrl: 'img_min/tamaulipas.jpg'},
-            {id: 28, nombre: 'Tlaxcala', categoria: 'Integrantes', link: 'https://example.com/tlaxcala', imageUrl: 'img_min/tlaxcala.jpg'},
-            {id: 29, nombre: 'Veracruz', categoria: 'Integrantes', link: 'https://example.com/veracruz', imageUrl: 'img_min/veracruz.jpg'},
-            {id: 30, nombre: 'Yucatán', categoria: 'Integrantes', link: 'https://example.com/yucatan', imageUrl: 'img_min/yucatán.jpg'},
-            {id: 31, nombre: 'Zacatecas', categoria: 'Integrantes', link: 'https://example.com/zacatecas', imageUrl: 'img_min/zacatecas.jpg'},
-            {id: 32, nombre: 'Ciudad de México', categoria: 'Integrantes', link: 'https://docs.google.com/document/d/e/2PACX-1vRDU28xo4JQpR_wuMUWKtQ0F3TGNmfRJoUcvH1UmbU7uN7VlL3jMQhWAgO1Wh7K56jl2TlbTyshyjQd/pub?embedded=true', imageUrl: 'img_min/ciudad-de-méxico.jpg'}
-        ];
+        document.addEventListener('DOMContentLoaded', function() {
+            const estados = [
+                {id: 1, nombre: 'Aguascalientes', categoria: 'Integrantes', link: 'https://example.com/aguascalientes', imageUrl: 'img_min/aguascalientes.jpg'},
+                {id: 2, nombre: 'Baja California', categoria: 'Integrantes', link: 'https://example.com/baja-california', imageUrl: 'img_min/baja-california.jpg'},
+                {id: 3, nombre: 'Baja California Sur', categoria: 'Integrantes', link: 'https://example.com/baja-california-sur', imageUrl: 'img_min/baja-california-sur.jpg'},
+                {id: 4, nombre: 'Campeche', categoria: 'Integrantes', link: 'https://example.com/campeche', imageUrl: 'img_min/campeche.jpg'},
+                {id: 5, nombre: 'Chiapas', categoria: 'Integrantes', link: 'https://example.com/chiapas', imageUrl: 'img_min/chiapas.jpg'},
+                {id: 6, nombre: 'Chihuahua', categoria: 'Integrantes', link: 'https://example.com/chihuahua', imageUrl: 'img_min/chihuahua.jpg'},
+                {id: 7, nombre: 'Coahuila', categoria: 'Integrantes', link: 'https://example.com/coahuila', imageUrl: 'img_min/coahuila.jpg'},
+                {id: 8, nombre: 'Colima', categoria: 'Integrantes', link: 'https://example.com/colima', imageUrl: 'img_min/colima.jpg'},
+                {id: 9, nombre: 'Durango', categoria: 'Integrantes', link: 'https://example.com/durango', imageUrl: 'img_min/durango.jpg'},
+                {id: 10, nombre: 'Estado de México', categoria: 'Integrantes', link: 'https://example.com/estado-de-mexico', imageUrl: 'img_min/estado-de-méxico.jpg'},
+                {id: 11, nombre: 'Guanajuato', categoria: 'Integrantes', link: 'https://example.com/guanajuato', imageUrl: 'img_min/guanajuato.jpg'},
+                {id: 12, nombre: 'Guerrero', categoria: 'Integrantes', link: 'https://example.com/guerrero', imageUrl: 'img_min/guerrero.jpg'},
+                {id: 13, nombre: 'Hidalgo', categoria: 'Integrantes', link: 'https://example.com/hidalgo', imageUrl: 'img_min/hidalgo.jpg'},
+                {id: 14, nombre: 'Jalisco', categoria: 'Integrantes', link: 'https://example.com/jalisco', imageUrl: 'img_min/jalisco.jpg'},
+                {id: 15, nombre: 'Michoacán', categoria: 'Integrantes', link: 'https://example.com/michoacan', imageUrl: 'img_min/michoacán.jpg'},
+                {id: 16, nombre: 'Morelos', categoria: 'Integrantes', link: 'https://example.com/morelos', imageUrl: 'img_min/morelos.jpg'},
+                {id: 17, nombre: 'Nayarit', categoria: 'Integrantes', link: 'https://example.com/nayarit', imageUrl: 'img_min/nayarit.jpg'},
+                {id: 18, nombre: 'Nuevo León', categoria: 'Integrantes', link: 'https://example.com/nuevo-leon', imageUrl: 'img_min/nuevo-león.jpg'},
+                {id: 19, nombre: 'Oaxaca', categoria: 'Integrantes', link: 'https://example.com/oaxaca', imageUrl: 'img_min/oaxaca.jpg'},
+                {id: 20, nombre: 'Puebla', categoria: 'Integrantes', link: 'https://example.com/puebla', imageUrl: 'img_min/puebla.jpg'},
+                {id: 21, nombre: 'Querétaro', categoria: 'Integrantes', link: 'https://example.com/queretaro', imageUrl: 'img_min/querétaro.jpg'},
+                {id: 22, nombre: 'Quintana Roo', categoria: 'Integrantes', link: 'https://example.com/quintana-roo', imageUrl: 'img_min/quintana-roo.jpg'},
+                {id: 23, nombre: 'San Luis Potosí', categoria: 'Integrantes', link: 'https://example.com/san-luis-potosi', imageUrl: 'img_min/san-luis-potosí.jpg'},
+                {id: 24, nombre: 'Sinaloa', categoria: 'Integrantes', link: 'https://example.com/sinaloa', imageUrl: 'img_min/sinaloa.jpg'},
+                {id: 25, nombre: 'Sonora', categoria: 'Integrantes', link: 'https://example.com/sonora', imageUrl: 'img_min/sonora.jpg'},
+                {id: 26, nombre: 'Tabasco', categoria: 'Integrantes', link: 'https://example.com/tabasco', imageUrl: 'img_min/tabasco.jpg'},
+                {id: 27, nombre: 'Tamaulipas', categoria: 'Integrantes', link: 'https://example.com/tamaulipas', imageUrl: 'img_min/tamaulipas.jpg'},
+                {id: 28, nombre: 'Tlaxcala', categoria: 'Integrantes', link: 'https://example.com/tlaxcala', imageUrl: 'img_min/tlaxcala.jpg'},
+                {id: 29, nombre: 'Veracruz', categoria: 'Integrantes', link: 'https://example.com/veracruz', imageUrl: 'img_min/veracruz.jpg'},
+                {id: 30, nombre: 'Yucatán', categoria: 'Integrantes', link: 'https://example.com/yucatan', imageUrl: 'img_min/yucatán.jpg'},
+                {id: 31, nombre: 'Zacatecas', categoria: 'Integrantes', link: 'https://example.com/zacatecas', imageUrl: 'img_min/zacatecas.jpg'},
+                {id: 32, nombre: 'Ciudad de México', categoria: 'Integrantes', link: 'https://docs.google.com/document/d/e/2PACX-1vRDU28xo4JQpR_wuMUWKtQ0F3TGNmfRJoUcvH1UmbU7uN7VlL3jMQhWAgO1Wh7K56jl2TlbTyshyjQd/pub?embedded=true', imageUrl: 'img_min/ciudad-de-méxico.jpg'}
+            ];
 
-        const searchInput = document.getElementById('searchInput');
-        const toggleButton = document.getElementById('toggleButton');
-        const allStatesList = document.getElementById('allStatesList');
-        const searchResults = document.getElementById('searchResults');
-        const stateInfo = document.getElementById('stateInfo');
-        const statePopup = document.getElementById('statePopup');
-        const stateIFrame = stateInfo.querySelector("iframe");
-        const showOnMapButton = document.getElementById('showOnMap');
-        const clearSearchButton = document.getElementById('clearSearchButton');
-        let currentStateId = null;
+            const searchInput = document.getElementById('searchInput');
+            const toggleButton = document.getElementById('toggleButton');
+            const allStatesList = document.getElementById('allStatesList');
+            const searchResults = document.getElementById('searchResults');
+            const stateInfo = document.getElementById('stateInfo');
+            const statePopup = document.getElementById('statePopup');
+            const stateIFrame = stateInfo.querySelector("iframe");
+            const showOnMapButton = document.getElementById('showOnMap');
+            const clearSearchButton = document.getElementById('clearSearchButton');
+            let currentStateId = null;
 
-        // Mostrar el botón "X" cuando hay texto en el campo
-        searchInput.addEventListener('input', function() {
-            if (this.value) {
-                clearSearchButton.style.display = 'block'; // Mostrar el botón
-            } else {
-                clearSearchButton.style.display = 'none'; // Ocultar el botón
-            }
-        });
+            // Mostrar el botón "X" cuando hay texto en el campo
+            searchInput.addEventListener('input', function() {
+                if (this.value) {
+                    clearSearchButton.style.display = 'block'; // Mostrar el botón
+                } else {
+                    clearSearchButton.style.display = 'none'; // Ocultar el botón
+                }
+            });
 
-        // Limpiar el campo de búsqueda al hacer clic en "X"
-        clearSearchButton.addEventListener('click', function() {
-            searchInput.value = ''; // Limpiar el texto
-            this.style.animation = 'hide 0.3s forwards'; // Agregar animación de ocultar
-            setTimeout(() => {
-                this.style.display = 'none'; // Ocultar después de la animación
-            }, 300);
-            searchInput.focus(); // Regresar el foco al input
-            searchStates(); // Llamar a la función para actualizar la lista de estados
-        });
-
-        function adjustClearButtonPosition() {
-            const inputWidth = searchInput.clientWidth; // Obtener el ancho del input
-            clearSearchButton.style.left = `${inputWidth - 25}px`; // Ajustar espacio para el botón "X"
-        }
-
-        // Llama a esta función al cambiar el tamaño del input
-        searchInput.addEventListener('input', function() {
-            if (this.value) {
-                clearSearchButton.style.display = 'block'; // Mostrar el botón
-                clearSearchButton.style.opacity = 1; // Preparar para la animación
-                clearSearchButton.style.animation = 'show 0.3s forwards'; // Agregar animación
-            } else {
-                clearSearchButton.style.animation = 'hide 0.3s forwards'; // Agregar animación de ocultar
+            // Limpiar el campo de búsqueda al hacer clic en "X"
+            clearSearchButton.addEventListener('click', function() {
+                searchInput.value = ''; // Limpiar el texto
+                this.style.animation = 'hide 0.3s forwards'; // Agregar animación de ocultar
                 setTimeout(() => {
-                    clearSearchButton.style.display = 'none'; // Ocultar después de la animación
+                    this.style.display = 'none'; // Ocultar después de la animación
                 }, 300);
-            }
-            adjustClearButtonPosition(); // Ajustar la posición con cada entrada
-        });
-
-
-        // También ajusta la posición al cargar
-        window.addEventListener('load', adjustClearButtonPosition);
-
-        function renderStateList(states, container) {
-            container.innerHTML = '';
-            states.forEach(state => {
-                const card = document.createElement('div');
-                card.className = 'state-card';
-                card.innerHTML = `
-                    <img src="${state.imageUrl}" alt="${state.nombre}" class="state-image">
-                    <div class="state-info">
-                        <h3 class="state-name">${state.nombre}</h3>
-                        <p class="state-category">${state.categoria}</p>
-                    </div>
-                `;
-                card.addEventListener('click', () => selectState(state));
-                container.appendChild(card);
+                searchInput.focus(); // Regresar el foco al input
+                searchStates(); // Llamar a la función para actualizar la lista de estados
             });
-        }
 
-        function selectState(state) {
-            loadStateHTML(state.link);
-            currentStateId = state.id;
-            updateShowOnMapButton(state.nombre);
-            stateInfo.style.display = 'block'; // Mostrar el div stateInfo
-            closePopup();
-        }
-
-        function loadStateHTML(link) {
-            stateIFrame.src = link;
-        }
-
-
-        function updateShowOnMapButton(stateName) {
-            showOnMapButton.textContent = `Mostrar ${stateName} en el Mapa`;
-            showOnMapButton.style.display = 'block';
-        }
-
-        async function updateEstadoMapa() {
-            const response = await fetch('estadoMapa.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ estadoId: currentStateId })
-            });
-            const result = await response.json();
-            if (result.success) {
-                console.log(`Estado del mapa actualizado: ${currentStateId}`);
-            } else {
-                console.error('Error al actualizar el estado del mapa', result.message);
+            function adjustClearButtonPosition() {
+                const inputWidth = searchInput.clientWidth; // Obtener el ancho del input
+                clearSearchButton.style.left = `${inputWidth - 25}px`; // Ajustar espacio para el botón "X"
             }
-        }
 
-        function searchStates() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const filteredStates = estados.filter(state => 
-                state.nombre.toLowerCase().includes(searchTerm)
-            );
-            renderStateList(filteredStates, searchResults);
-            searchResults.style.display = searchTerm ? 'grid' : 'none';
-        }
+            // Llama a esta función al cambiar el tamaño del input
+            searchInput.addEventListener('input', function() {
+                if (this.value) {
+                    clearSearchButton.style.display = 'block'; // Mostrar el botón
+                    clearSearchButton.style.opacity = 1; // Preparar para la animación
+                    clearSearchButton.style.animation = 'show 0.3s forwards'; // Agregar animación
+                } else {
+                    clearSearchButton.style.animation = 'hide 0.3s forwards'; // Agregar animación de ocultar
+                    setTimeout(() => {
+                        clearSearchButton.style.display = 'none'; // Ocultar después de la animación
+                    }, 300);
+                }
+                adjustClearButtonPosition(); // Ajustar la posición con cada entrada
+            });
 
-        function togglePopup() {
-            statePopup.style.display = statePopup.style.display === 'none' ? 'block' : 'none';
-            toggleButton.textContent = statePopup.style.display === 'none' ? 'Mostrar Estados' : 'Ocultar Estados';
-        }
 
-        function closePopup() {
-            statePopup.style.display = 'none';
-            toggleButton.textContent = 'Mostrar Estados';
-        }
+            // También ajusta la posición al cargar
+            window.addEventListener('load', adjustClearButtonPosition);
 
-        toggleButton.addEventListener('click', togglePopup);
-        searchInput.addEventListener('input', searchStates);
-        statePopup.addEventListener('click', (e) => {
-            if (e.target === statePopup) {
+            function renderStateList(states, container) {
+                container.innerHTML = '';
+                states.forEach(state => {
+                    const card = document.createElement('div');
+                    card.className = 'state-card';
+                    card.innerHTML = `
+                        <img src="${state.imageUrl}" alt="${state.nombre}" class="state-image">
+                        <div class="state-info">
+                            <h3 class="state-name">${state.nombre}</h3>
+                            <p class="state-category">${state.categoria}</p>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => selectState(state));
+                    container.appendChild(card);
+                });
+            }
+
+            function selectState(state) {
+                loadStateHTML(state.link);
+                currentStateId = state.id;
+                updateShowOnMapButton(state.nombre);
+                stateInfo.style.display = 'block'; // Mostrar el div stateInfo
                 closePopup();
             }
-        });
 
-        renderStateList(estados, allStatesList);
-        stateIFrame.src = '';
-        statePopup.style.display = 'none';
-        searchResults.style.display = 'none';
+            function loadStateHTML(link) {
+                stateIFrame.src = link;
+                // Mostrar el cargador antes de iniciar la carga del iframe
+                const loader = document.getElementById('placeholder');
+                loader.style.display = 'block'; // Mostrar cargador
+            }
+
+            function onIframeLoad() {
+                const loader = document.getElementById('placeholder');
+                loader.style.display = 'none'; // Ocultar cargador
+                console.log("iframe Loaded"); // Para depuración
+            }
+            // Asigna el manejador de evento onload para el iframe
+            stateIFrame.onload = onIframeLoad;
+
+            function updateShowOnMapButton(stateName) {
+                showOnMapButton.textContent = `Mostrar ${stateName} en el Mapa`;
+                showOnMapButton.style.display = 'block';
+            }
+
+            async function updateEstadoMapa() {
+                const response = await fetch('estadoMapa.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ estadoId: currentStateId })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    console.log(`Estado del mapa actualizado: ${currentStateId}`);
+                } else {
+                    console.error('Error al actualizar el estado del mapa', result.message);
+                }
+            }
+
+            function searchStates() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredStates = estados.filter(state => 
+                    state.nombre.toLowerCase().includes(searchTerm)
+                );
+                renderStateList(filteredStates, searchResults);
+                searchResults.style.display = searchTerm ? 'grid' : 'none';
+            }
+
+            function togglePopup() {
+                statePopup.style.display = statePopup.style.display === 'none' ? 'block' : 'none';
+                toggleButton.textContent = statePopup.style.display === 'none' ? 'Mostrar Estados' : 'Ocultar Estados';
+            }
+
+            function closePopup() {
+                statePopup.style.display = 'none';
+                toggleButton.textContent = 'Mostrar Estados';
+            }
+
+            toggleButton.addEventListener('click', togglePopup);
+            searchInput.addEventListener('input', searchStates);
+            statePopup.addEventListener('click', (e) => {
+                if (e.target === statePopup) {
+                    closePopup();
+                }
+            });
+
+            renderStateList(estados, allStatesList);
+            stateIFrame.src = '';
+            statePopup.style.display = 'none';
+            searchResults.style.display = 'none';
+        });
     </script>
 </body>
 </html>
