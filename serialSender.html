@@ -51,6 +51,31 @@
         button:hover {
             background-color: #5b4cc7;
         }
+        .log-container {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        .log-entry {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .log-entry img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .log-entry span {
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -64,8 +89,48 @@
     <div class="container">
         <h1>Enviar Estados al Mapa</h1>
         <button id="connectSerialButton">Conectar Microbit</button>
+        <div class="log-container" id="logContainer">
+            <h2>Log de Estados Enviados</h2>
+            <div id="logContent"></div>
+        </div>
     </div>
     <script>
+        // Constante con los datos de los estados
+        const estados = [
+            {id: 1, nombre: 'Aguascalientes', categoria: 'Integrantes', imageUrl: 'img_min/aguascalientes.jpg'},
+            {id: 2, nombre: 'Baja California', categoria: 'Integrantes', imageUrl: 'img_min/baja-california.jpg'},
+            {id: 3, nombre: 'Baja California Sur', categoria: 'Integrantes', imageUrl: 'img_min/baja-california-sur.jpg'},
+            {id: 4, nombre: 'Campeche', categoria: 'Integrantes', imageUrl: 'img_min/campeche.jpg'},
+            {id: 5, nombre: 'Chiapas', categoria: 'Integrantes', imageUrl: 'img_min/chiapas.jpg'},
+            {id: 6, nombre: 'Chihuahua', categoria: 'Integrantes', imageUrl: 'img_min/chihuahua.jpg'},
+            {id: 7, nombre: 'Coahuila', categoria: 'Integrantes', imageUrl: 'img_min/coahuila.jpg'},
+            {id: 8, nombre: 'Colima', categoria: 'Integrantes', imageUrl: 'img_min/colima.jpg'},
+            {id: 9, nombre: 'Durango', categoria: 'Integrantes', imageUrl: 'img_min/durango.jpg'},
+            {id: 10, nombre: 'Estado de México', categoria: 'Integrantes', imageUrl: 'img_min/estado-de-méxico.jpg'},
+            {id: 11, nombre: 'Guanajuato', categoria: 'Integrantes', imageUrl: 'img_min/guanajuato.jpg'},
+            {id: 12, nombre: 'Guerrero', categoria: 'Integrantes', imageUrl: 'img_min/guerrero.jpg'},
+            {id: 13, nombre: 'Hidalgo', categoria: 'Integrantes', imageUrl: 'img_min/hidalgo.jpg'},
+            {id: 14, nombre: 'Jalisco', categoria: 'Integrantes', imageUrl: 'img_min/jalisco.jpg'},
+            {id: 15, nombre: 'Michoacán', categoria: 'Integrantes', imageUrl: 'img_min/michoacán.jpg'},
+            {id: 16, nombre: 'Morelos', categoria: 'Integrantes', imageUrl: 'img_min/morelos.jpg'},
+            {id: 17, nombre: 'Nayarit', categoria: 'Integrantes', imageUrl: 'img_min/nayarit.jpg'},
+            {id: 18, nombre: 'Nuevo León', categoria: 'Integrantes', imageUrl: 'img_min/nuevo-león.jpg'},
+            {id: 19, nombre: 'Oaxaca', categoria: 'Integrantes', imageUrl: 'img_min/oaxaca.jpg'},
+            {id: 20, nombre: 'Puebla', categoria: 'Integrantes', imageUrl: 'img_min/puebla.jpg'},
+            {id: 21, nombre: 'Querétaro', categoria: 'Integrantes', imageUrl: 'img_min/querétaro.jpg'},
+            {id: 22, nombre: 'Quintana Roo', categoria: 'Integrantes', imageUrl: 'img_min/quintana-roo.jpg'},
+            {id: 23, nombre: 'San Luis Potosí', categoria: 'Integrantes', imageUrl: 'img_min/san-luis-potosí.jpg'},
+            {id: 24, nombre: 'Sinaloa', categoria: 'Integrantes', imageUrl: 'img_min/sinaloa.jpg'},
+            {id: 25, nombre: 'Sonora', categoria: 'Integrantes', imageUrl: 'img_min/sonora.jpg'},
+            {id: 26, nombre: 'Tabasco', categoria: 'Integrantes', imageUrl: 'img_min/tabasco.jpg'},
+            {id: 27, nombre: 'Tamaulipas', categoria: 'Integrantes', imageUrl: 'img_min/tamaulipas.jpg'},
+            {id: 28, nombre: 'Tlaxcala', categoria: 'Integrantes', imageUrl: 'img_min/tlaxcala.jpg'},
+            {id: 29, nombre: 'Veracruz', categoria: 'Integrantes', imageUrl: 'img_min/veracruz.jpg'},
+            {id: 30, nombre: 'Yucatán', categoria: 'Integrantes', imageUrl: 'img_min/yucatán.jpg'},
+            {id: 31, nombre: 'Zacatecas', categoria: 'Integrantes', imageUrl: 'img_min/zacatecas.jpg'},
+            {id: 32, nombre: 'Ciudad de México', categoria: 'Integrantes', imageUrl: 'img_min/ciudad-de-méxico.jpg'}
+        ];
+
         let port;
         let textEncoder;
         let writer;
@@ -84,14 +149,14 @@
 
         document.getElementById('connectSerialButton').addEventListener('click', async () => {
             try {
-                port = await navigator.serial.requestPort();
+                /* port = await navigator.serial.requestPort();
                 await port.open({ baudRate: 115200 });
 
                 textEncoder = new TextEncoderStream();
                 const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
                 writer = textEncoder.writable.getWriter();
                 console.log("Conexión serial establecida.");
-
+ */
                 // Aquí inicia el intervalo para enviar datos constantemente
                 setInterval(async () => {
                     const response = await fetch('estadoMapa.php', {
@@ -105,9 +170,11 @@
                     const data = await response.json();
 
                     if (data.success) {
-                        const message = `${data.estadoId}\r\n`; // Agregar nueva línea
-                        await writer.write(message);
+                        const estadoId = data.estadoId;
+                        const message = `${estadoId}\r\n`; // Agregar nueva línea
+                        //await writer.write(message);
                         console.log(`Enviando: ${message}`);
+                        displayLog(estadoId); // Mostrar en el log
                     } else {
                         console.log(data.message); // Mensaje cuando la cola está vacía
                     }
@@ -118,6 +185,22 @@
                 alert("Error al conectar con el puerto serial: " + error.message);
             }
         });
+
+        function displayLog(estadoId) {
+            const logContent = document.getElementById('logContent');
+            // Encontrar el estado correspondiente en el objeto estados
+            const estado = estados.find(e => e.id === estadoId);
+            if (estado) {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry'; // Adicione esta clase para darle estilo (si lo deseas)
+                logEntry.innerHTML = `
+                    <img src="${estado.imageUrl}" alt="${estado.nombre}" style="width: 40px; height: 40px; border-radius: 5px;">
+                    <span>Estado: ${estado.nombre} (ID: ${estadoId}) enviado</span>
+                `;
+                // Insertar el nuevo log al inicio
+                logContent.insertBefore(logEntry, logContent.firstChild);
+            }
+        }
     </script>
 </body>
 </html>
