@@ -19,8 +19,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($data['estadoId'])) {
         // Leer el contenido actual
         $jsonData = json_decode(file_get_contents($filename), true);
+
+        // Verificar si el ID ya está en la cola
+        if (in_array($data['estadoId'], $jsonData['queue'])) {
+            // Si el ID ya existe, no lo agregamos
+            echo json_encode(['success' => false, 'message' => 'El ID ya está en la cola']);
+            return; // Termina la ejecución aquí
+        }
+
         // Agregar el nuevo estado a la cola
         $jsonData['queue'][] = $data['estadoId'];
+
         // Guardar la cola actualizada
         file_put_contents($filename, json_encode($jsonData));
         echo json_encode(['success' => true, 'message' => $data['estadoId']]);
