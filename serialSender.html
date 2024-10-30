@@ -149,14 +149,14 @@
 
         document.getElementById('connectSerialButton').addEventListener('click', async () => {
             try {
-                /* port = await navigator.serial.requestPort();
+                port = await navigator.serial.requestPort();
                 await port.open({ baudRate: 115200 });
 
                 textEncoder = new TextEncoderStream();
                 const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
                 writer = textEncoder.writable.getWriter();
                 console.log("Conexión serial establecida.");
- */
+
                 // Aquí inicia el intervalo para enviar datos constantemente
                 setInterval(async () => {
                     const response = await fetch('estadoMapa.php', {
@@ -172,7 +172,7 @@
                     if (data.success) {
                         const estadoId = data.estadoId;
                         const message = `${estadoId}\r\n`; // Agregar nueva línea
-                        //await writer.write(message);
+                        await writer.write(message);
                         console.log(`Enviando: ${message}`);
                         displayLog(estadoId); // Mostrar en el log
                     } else {
