@@ -50,6 +50,25 @@
             border: 1px solid #ddd;
             border-radius: 25px;
             outline: none;
+            padding-right: 40px; /* Espacio para el botón "X" */
+        }
+
+        #clearSearchButton {
+            display: none;
+            position: absolute;
+            right: 186px; /* margen desde la derecha */
+            top: 50%; /* posicion vertical */
+            transform: translateY(-50%); /* centrar verticalmente */
+            background: none; /* Sin color de fondo */
+            border: none; /* Sin bordes */
+            color: #6c5ce7; /* Color que deseas para la X */
+            font-size: 18px; /* Tamaño de fuente */
+            cursor: pointer; /* Cambiar cursor al hover */
+            padding: 0; /* Sin padding */
+        }
+
+        #clearSearchButton:hover {
+            color: #5b4cc7; /* Color al pasar el cursor */
         }
         button {
             padding: 10px 20px;
@@ -192,8 +211,9 @@
     </header>
     <div class="container">
         <h1>Explorador de Estados de México</h1>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar un estado...">
+        <div class="search-container" style="position: relative;">
+            <input type="text" id="searchInput" placeholder="Buscar un estado..." style="padding-right: 40px;"> <!-- Aumentar el padding derecho para el botón "X" -->
+            <button id="clearSearchButton">&times;</button> <!-- Botón de limpiar como X -->
             <button id="toggleButton">Mostrar Estados</button>
         </div>
         <div id="searchResults" class="state-grid"></div>
@@ -255,7 +275,24 @@
         const statePopup = document.getElementById('statePopup');
         const stateIFrame = stateInfo.querySelector("iframe");
         const showOnMapButton = document.getElementById('showOnMap');
+        const clearSearchButton = document.getElementById('clearSearchButton');
         let currentStateId = null;
+
+        // Mostrar el botón "X" cuando hay texto en el campo
+        searchInput.addEventListener('input', function() {
+            if (this.value) {
+                clearSearchButton.style.display = 'block'; // Mostrar el botón
+            } else {
+                clearSearchButton.style.display = 'none'; // Ocultar el botón
+            }
+        });
+
+        // Limpiar el campo de búsqueda al hacer clic en "X"
+        clearSearchButton.addEventListener('click', function() {
+            searchInput.value = ''; // Limpiar el texto
+            this.style.display = 'none'; // Ocultar el botón "X"
+            searchStates(); // Llamar a la función para actualizar la lista de estados
+        });
 
         function renderStateList(states, container) {
             container.innerHTML = '';
