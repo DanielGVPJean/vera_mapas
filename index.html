@@ -56,15 +56,14 @@
         #clearSearchButton {
             display: none;
             position: absolute;
-            right: 186px; /* margen desde la derecha */
-            top: 50%; /* posicion vertical */
-            transform: translateY(-50%); /* centrar verticalmente */
-            background: none; /* Sin color de fondo */
-            border: none; /* Sin bordes */
-            color: #6c5ce7; /* Color que deseas para la X */
-            font-size: 18px; /* Tamaño de fuente */
-            cursor: pointer; /* Cambiar cursor al hover */
-            padding: 0; /* Sin padding */
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c5ce7;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
         }
 
         #clearSearchButton:hover {
@@ -293,6 +292,24 @@
             this.style.display = 'none'; // Ocultar el botón "X"
             searchStates(); // Llamar a la función para actualizar la lista de estados
         });
+
+        function adjustClearButtonPosition() {
+            const inputWidth = searchInput.clientWidth; // Obtener el ancho del input
+            clearSearchButton.style.left = `${inputWidth - 25}px`; // Ajustar espacio para el botón "X"
+        }
+
+        // Llama a esta función al cambiar el tamaño del input
+        searchInput.addEventListener('input', function() {
+            if (this.value) {
+                clearSearchButton.style.display = 'block'; // Mostrar el botón
+            } else {
+                clearSearchButton.style.display = 'none'; // Ocultar el botón
+            }
+            adjustClearButtonPosition(); // Ajustar la posición con cada entrada
+        });
+
+        // También ajusta la posición al cargar
+        window.addEventListener('load', adjustClearButtonPosition);
 
         function renderStateList(states, container) {
             container.innerHTML = '';
