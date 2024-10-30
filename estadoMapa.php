@@ -36,6 +36,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo json_encode(['success' => false, 'message' => 'Cola vacía']);
         }
+    } 
+    // Vaciar la cola completamente
+    else if (isset($data['clear'])) {
+        file_put_contents($filename, json_encode(['queue' => []])); // Reiniciar la cola
+        echo json_encode(['success' => true, 'message' => 'Cola vaciada']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Solicitud no válida']);
     }

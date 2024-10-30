@@ -69,6 +69,18 @@
         let textEncoder;
         let writer;
 
+        // Vaciamos la cola al cargar la página
+        fetch('estadoMapa.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ clear: true }) // Petición para vaciar la cola
+        })
+        .then(response => response.json())
+        .then(data => console.log(data.message))
+        .catch(error => console.error('Error al vaciar la cola:', error));
+
         document.getElementById('connectSerialButton').addEventListener('click', async () => {
             try {
                 port = await navigator.serial.requestPort();
