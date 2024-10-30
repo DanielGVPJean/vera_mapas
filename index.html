@@ -14,7 +14,7 @@
             color: #333;
         }
         .container {
-            max-width: 1200px;
+            max-width: 90%; /* Cambiar para que sea menor al ancho de la pantalla */
             margin: 0 auto;
             padding: 20px;
         }
@@ -131,6 +131,12 @@
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .state-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Reducir a la mitad en pantallas móviles */
+            }
         }
         .state-card {
             background-color: #fff;
