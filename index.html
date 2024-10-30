@@ -119,13 +119,14 @@
             color: #6c5ce7;
         }
         #stateInfo {
+            display: none; /* Ocultar inicialmente */
             position: relative;
             margin-left: auto;
             margin-right: auto;
             width: 900px;
             background-color: #fff;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -207,7 +208,7 @@
             {id: 7, nombre: 'Coahuila', categoria: 'Integrantes', link: 'https://example.com/coahuila', imageUrl: 'img/coahuila.jpg'},
             {id: 8, nombre: 'Colima', categoria: 'Integrantes', link: 'https://example.com/colima', imageUrl: 'img/colima.jpg'},
             {id: 9, nombre: 'Durango', categoria: 'Integrantes', link: 'https://example.com/durango', imageUrl: 'img/durango.jpg'},
-            {id: 10, nombre: 'Estado de México', categoria: 'IntegrantesCultura', link: 'https://example.com/estado-de-mexico', imageUrl: 'img/estado-de-méxico.jpg'},
+            {id: 10, nombre: 'Estado de México', categoria: 'Integrantes', link: 'https://example.com/estado-de-mexico', imageUrl: 'img/estado-de-méxico.jpg'},
             {id: 11, nombre: 'Guanajuato', categoria: 'Integrantes', link: 'https://example.com/guanajuato', imageUrl: 'img/guanajuato.jpg'},
             {id: 12, nombre: 'Guerrero', categoria: 'Integrantes', link: 'https://example.com/guerrero', imageUrl: 'img/guerrero.jpg'},
             {id: 13, nombre: 'Hidalgo', categoria: 'Integrantes', link: 'https://example.com/hidalgo', imageUrl: 'img/hidalgo.jpg'},
@@ -263,6 +264,7 @@
             loadStateHTML(state.link);
             currentStateId = state.id;
             updateShowOnMapButton(state.nombre);
+            stateInfo.style.display = 'block'; // Mostrar el div stateInfo
             closePopup();
         }
 
