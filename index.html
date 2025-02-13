@@ -237,6 +237,7 @@
         }
         .state-image {
             width: 100%;
+            aspect-ratio: 16/9;
             height: 120px;
             object-fit: cover;
         }
@@ -370,7 +371,7 @@
     </style>
 </head>
 <!-- Esto esta bien -->
-<body>
+<html>
     <header class="header">
         <div class="header-content">
             <div class="logo-container">
@@ -386,8 +387,7 @@
             <input type="text" id="searchInput" placeholder="Buscar un estado..." style="padding-right: 40px;"> <!-- Aumentar el padding derecho para el botón "X" -->
             <button id="clearSearchButton">&times;</button> <!-- Botón de limpiar como X -->
     <button id="toggleButton">Mostrar Estados</button>
-    <button id="arteButton">Proyecto de Arte</button>
-    <button id="animalesButton">Animales de México</button>
+    <button id="arteButton">Animales de México</button>
         </div>
         <div id="searchResults" class="state-grid"></div>
         
@@ -453,24 +453,24 @@
         // estados object
 
         const art = [
-            {id: 1, nombre: 'Ballena Azul', categoria: '4A -Equipo 1', imageUrl: 'img/animales/4A-EQUIPO1-BALLENAAZUL.jpg'},
-            {id: 2, nombre: 'Oso Negro', categoria: '4A - Equipo 2', imageUrl: 'img/animales/4A-EQUIPO2-OSONEGRO.jpg'},
-            {id: 3, nombre: 'Perrito de la Pradera', categoria: '4A - Equipo 3', imageUrl: 'img/animales/4A-EQUIPO3-PERRITOPRAD.jpg'},
-            {id: 4, nombre: 'Puma', categoria: '4A - Equipo 4', imageUrl: 'img/animales/4A-EQUIPO4-PUMACONCOLOR.jpg'},
-            {id: 5, nombre: 'Ocelote', categoria: '4A - Equipo 5', imageUrl: 'img/animales/4A-EQUIPO5-OCELOTE.jpg'},
-            {id: 6, nombre: 'Cotorro', categoria: '4A - Equipo 6', imageUrl: 'img/animales/4A-EQUIPO6-COTORRO.jpg'},
-            {id: 7, nombre: 'Nutria', categoria: '4B - Equipo 1', imageUrl: 'img/animales/4B-EQUIPO1-Nutria.jpg'},
-            {id: 8, nombre: 'Puma del desierto', categoria: '4B - Equipo 2', imageUrl: 'img/animales/4B-EQUIPO2-Puma del desierto.jpg'},
-            {id: 9, nombre: 'Jaguar', categoria: '4B - Equipo 3', imageUrl: 'img/animales/4B-EQUIPO3-Jaguar.jpg'},
-            {id: 10, nombre: 'Zorro gris', categoria: '4B - Equipo 4', imageUrl: 'img/animales/4B-EQUIPO4-Zorro gris.jpg'},
-            {id: 11, nombre: 'Gato Montés', categoria: '4B - Equipo 5', imageUrl: 'img/animales/4B-EQUIPO5-Gato Montés.jpg'},
-            {id: 12, nombre: 'Ajolote', categoria: '4B - Equipo 6', imageUrl: 'img/animales/4B-EQUIPO6-Ajolote.jpg'},
-            {id: 13, nombre: 'Mono aullador', categoria: '4C - Equipo 1', imageUrl: 'img/animales/4C-EQUIPO1-Mono aullador.jpg'},
-            {id: 14, nombre: 'Puercoespin', categoria: '4C - Equipo 2', imageUrl: 'img/animales/4C-EQUIPO2-Puercoespin.jpg'},
-            {id: 15, nombre: 'Quetzal', categoria: '4C - Equipo 3', imageUrl: 'img/animales/4C-EQUIPO3-Quetzal.jpg'},
-            {id: 16, nombre: 'Cangrejo azul', categoria: '4C - Equipo 4', imageUrl: 'img/animales/4C-EQUIPO4-Cangrejo azul.jpg'},
-            {id: 17, nombre: 'Tortuga', categoria: '4C - Equipo 5', imageUrl: 'img/animales/4C-EQUIPO5-Tortuga.jpg'},
-            {id: 18, nombre: 'Coati', categoria: '4C - Equipo 6', imageUrl: 'img/animales/4C-EQUIPO6-Coati.jpg'}
+        {id: 1, nombre: 'Ballena Azul', categoria: '4A -Equipo 1', link: 'https://www.canva.com/design/DAGe2hDitBA/ZLWvvw5_lnb1K7TGzDrVaw/view?embed', imageUrl: 'img/animales/4A-EQUIPO1-BALLENAAZUL.jpg'},
+                {id: 2, nombre: 'Oso Negro', categoria: '4A - Equipo 2', link: 'https://www.canva.com/design/DAGe2_SI7jc/MSW4BYxetnY2BFlVE-pYtQ/view?embed', imageUrl: 'img/animales/4A-EQUIPO2-OSONEGRO.jpg'},
+                {id: 3, nombre: 'Perrito de la Pradera', categoria: '4A - Equipo 3', link: 'https://www.canva.com/design/DAGe3Oa7wdY/zJr1KOOpv8UJTCoEsSFrYw/view?embed', imageUrl: 'img/animales/4A-EQUIPO3-PERRITOPRAD.jpg'},
+                {id: 4, nombre: 'Puma', categoria: '4A - Equipo 4', link: 'https://www.canva.com/design/DAGe3HtXqUI/U01Errp6NPCnsltTtxuDcQ/view?embed', imageUrl: 'img/animales/4A-EQUIPO4-PUMACONCOLOR.jpg'},
+                {id: 5, nombre: 'Ocelote', categoria: '4A - Equipo 5', link: 'https://www.canva.com/design/DAGe3KQFDsc/tT5oaUkBOT1LkgYCKR9isg/view?embed', imageUrl: 'img/animales/4A-EQUIPO5-OCELOTE.jpg'},
+                {id: 6, nombre: 'Cotorro', categoria: '4A - Equipo 6', link: 'https://www.canva.com/design/DAGe3emD0KI/Zh_qxg2axKPaVybRF_TGYw/view?embed', imageUrl: 'img/animales/4A-EQUIPO6-COTORRO.jpg'},
+                {id: 7, nombre: 'Nutria de río', categoria: '4B - Equipo 1', link: 'https://www.canva.com/design/DAGXl9Qlr6Y/y6o_zgc6-O9uZLqQSvJ8vw/view?embed', imageUrl: 'img/animales/4B-EQUIPO1-Nutria.jpg'},
+                {id: 8, nombre: 'Puma del desierto', categoria: '4B - Equipo 2', link: 'https://www.canva.com/design/DAGe3HtXqUI/U01Errp6NPCnsltTtxuDcQ/view?embed', imageUrl: 'img/animales/4B-EQUIPO2-Puma del desierto.jpg'},
+                {id: 9, nombre: 'Jaguar', categoria: '4B - Equipo 3', link: 'https://www.canva.com/design/DAGXlpv7RME/GPjiSXCZbcVUBHML4TUVZw/view?embed', imageUrl: 'img/animales/4B-EQUIPO3-Jaguar.jpg'},
+                {id: 10, nombre: 'Zorro gris', categoria: '4B - Equipo 4', link: 'https://www.canva.com/design/DAGXl678Nro/l35n2Fywnt_Gv5B5voog3A/view?embed', imageUrl: 'img/animales/4B-EQUIPO4-Zorro gris.jpg'},
+                {id: 11, nombre: 'Gato Montés', categoria: '4B - Equipo 5', link: 'https://www.canva.com/design/DAGXl6HgjOg/2hqWOi6JfAkfz4Rc2-0DvQ/view?embed', imageUrl: 'img/animales/4B-EQUIPO5-Gato Montés.jpg'},
+                {id: 12, nombre: 'Ajolote', categoria: '4B - Equipo 6', link: 'https://www.canva.com/design/DAGXlzXMa8I/Ys8SJ8l9HGXqfdty0NxbwQ/view?embed', imageUrl: 'img/animales/4B-EQUIPO6-Ajolote.jpg'},
+                {id: 13, nombre: 'Mono aullador', categoria: '4C - Equipo 1', link: 'https://www.canva.com/design/DAGcwW9ot6k/dX3c44EV9qxEd3KVFMvn3w/view?embed', imageUrl: 'img/animales/4C-EQUIPO1-Mono aullador.jpg'},
+                {id: 14, nombre: 'Puercoespín', categoria: '4C - Equipo 2', link: 'https://www.canva.com/design/DAGcwXIE20k/g_PAKNjq7A7qiev6fsweng/view?embed', imageUrl: 'img/animales/4C-EQUIPO2-Puercoespin.jpg'},
+                {id: 15, nombre: 'Quetzal', categoria: '4C - Equipo 3', link: 'https://www.canva.com/design/DAGY0iBh8Eo/f5B9M4e5t8r28MktG8fFCQ/view?embed', imageUrl: 'img/animales/4C-EQUIPO3-Quetzal.jpg'},
+                {id: 16, nombre: 'Cangrejo azul', categoria: '4C - Equipo 4', link: 'https://www.canva.com/design/DAGdB_s4LIw/ZqCBlduBt5Pn0bM1nr9i8g/view?embed', imageUrl: 'img/animales/4C-EQUIPO4-Cangrejo azul.jpg'},
+                {id: 17, nombre: 'Tortuga Carey', categoria: '4C - Equipo 5', link: 'https://www.canva.com/design/DAGY0szMSRM/M9Y_ExXqR25H8RFs3DE2Bg/view?embed', imageUrl: 'img/animales/4C-EQUIPO5-Tortuga.jpg'},
+                {id: 18, nombre: 'Coati', categoria: '4C - Equipo 6', link: 'https://www.canva.com/design/DAGecYKmQ_I/tCotiIH5wPKKOFg4n5ZExg/view?embed', imageUrl: 'img/animales/4C-EQUIPO6-Coati.jpg'}
         ];
 
         const searchInput = document.getElementById('searchInput');
@@ -548,50 +548,21 @@
             });
         }
 
-        function renderAnimalList(animals, container, selectedArtwork = null) {
+        function renderAnimalList(animals, container) {
             container.innerHTML = '';
-            
-            if (selectedArtwork) {
-                // Add back button
-                const backButton = document.createElement('button');
-                backButton.textContent = 'Regresar a la Galería';
-                backButton.style.marginBottom = '20px';
-                backButton.addEventListener('click', () => {
-                    renderAnimalList(art, container);
-                });
-                container.appendChild(backButton);
-
-                // Show only the selected artwork
+            animals.forEach(artwork => {
                 const card = document.createElement('div');
                 card.className = 'state-card';
-                card.style.maxWidth = '400px';
-                card.style.margin = '0 auto';
                 card.innerHTML = `
-                    <img src="${selectedArtwork.imageUrl}" alt="${selectedArtwork.nombre}" class="state-image" style="height: 300px;">
+                    <img src="${artwork.imageUrl}" alt="${artwork.nombre}" class="state-image">
                     <div class="state-info">
-                        <h3 class="state-name">${selectedArtwork.nombre}</h3>
-                        <p class="state-category">${selectedArtwork.categoria}</p>
+                        <h3 class="state-name">${artwork.nombre}</h3>
+                        <p class="state-category">${artwork.categoria}</p>
                     </div>
                 `;
+                card.addEventListener('click', () => selectState(artwork));
                 container.appendChild(card);
-            } else {
-                // Show all artworks in grid
-                animals.forEach(artwork => {
-                    const card = document.createElement('div');
-                    card.className = 'state-card';
-                    card.innerHTML = `
-                        <img src="${artwork.imageUrl}" alt="${artwork.nombre}" class="state-image">
-                        <div class="state-info">
-                            <h3 class="state-name">${artwork.nombre}</h3>
-                            <p class="state-category">${artwork.categoria}</p>
-                        </div>
-                    `;
-                    card.addEventListener('click', () => {
-                        renderAnimalList(art, container, artwork);
-                    });
-                    container.appendChild(card);
-                });
-            }
+            });
         }
 
         function selectState(state) {
@@ -659,7 +630,7 @@
             statePopup.style.display = 'none';
             toggleButton.textContent = 'Mostrar Estados';
             artsPopup.style.display = 'none';
-            arteButton.textContent = 'Proyecto de Arte';
+            arteButton.textContent = 'Animales de México';
         }
 
         toggleButton.addEventListener('click', () => togglePopup('statePopup'));
@@ -685,5 +656,4 @@
         });
     </script>
     <!-- Codigo de la función para actualizar el estado del mapa -->
-</body>
 </html>
