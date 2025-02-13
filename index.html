@@ -543,7 +543,7 @@
                         <p class="state-category">${state.categoria}</p>
                     </div>
                 `;
-                card.addEventListener('click', () => selectState(state));
+                card.addEventListener('click', () => selectState(state, true));
                 container.appendChild(card);
             });
         }
@@ -560,15 +560,20 @@
                         <p class="state-category">${artwork.categoria}</p>
                     </div>
                 `;
-                card.addEventListener('click', () => selectState(artwork));
+                card.addEventListener('click', () => selectState(artwork, false));
                 container.appendChild(card);
             });
         }
 
-        function selectState(state) {
+        function selectState(state, showMapButton = true) {
             loadStateHTML(state.link);
             currentStateId = state.id;
-            updateShowOnMapButton(state.nombre);
+            if (showMapButton) {
+                updateShowOnMapButton(state.nombre);
+                showOnMapButton.style.display = 'block';
+            } else {
+                showOnMapButton.style.display = 'none';
+            }
             stateInfo.style.display = 'block'; // Mostrar el div stateInfo
             closePopup();
         }
