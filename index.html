@@ -548,20 +548,50 @@
             });
         }
 
-        function renderAnimalList(animals, container) {
+        function renderAnimalList(animals, container, selectedArtwork = null) {
             container.innerHTML = '';
-            animals.forEach(animal => {
+            
+            if (selectedArtwork) {
+                // Add back button
+                const backButton = document.createElement('button');
+                backButton.textContent = 'Regresar a la Galería';
+                backButton.style.marginBottom = '20px';
+                backButton.addEventListener('click', () => {
+                    renderAnimalList(art, container);
+                });
+                container.appendChild(backButton);
+
+                // Show only the selected artwork
                 const card = document.createElement('div');
                 card.className = 'state-card';
+                card.style.maxWidth = '400px';
+                card.style.margin = '0 auto';
                 card.innerHTML = `
-                    <img src="${animal.imageUrl}" alt="${animal.nombre}" class="state-image">
+                    <img src="${selectedArtwork.imageUrl}" alt="${selectedArtwork.nombre}" class="state-image" style="height: 300px;">
                     <div class="state-info">
-                        <h3 class="state-name">${animal.nombre}</h3>
-                        <p class="state-category">${animal.categoria}</p>
+                        <h3 class="state-name">${selectedArtwork.nombre}</h3>
+                        <p class="state-category">${selectedArtwork.categoria}</p>
                     </div>
                 `;
                 container.appendChild(card);
-            });
+            } else {
+                // Show all artworks in grid
+                animals.forEach(artwork => {
+                    const card = document.createElement('div');
+                    card.className = 'state-card';
+                    card.innerHTML = `
+                        <img src="${artwork.imageUrl}" alt="${artwork.nombre}" class="state-image">
+                        <div class="state-info">
+                            <h3 class="state-name">${artwork.nombre}</h3>
+                            <p class="state-category">${artwork.categoria}</p>
+                        </div>
+                    `;
+                    card.addEventListener('click', () => {
+                        renderAnimalList(art, container, artwork);
+                    });
+                    container.appendChild(card);
+                });
+            }
         }
 
         function selectState(state) {
