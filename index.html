@@ -385,7 +385,8 @@
         <div class="search-container" style="position: relative;">
             <input type="text" id="searchInput" placeholder="Buscar un estado..." style="padding-right: 40px;"> <!-- Aumentar el padding derecho para el botón "X" -->
             <button id="clearSearchButton">&times;</button> <!-- Botón de limpiar como X -->
-            <button id="toggleButton">Mostrar Estados</button>
+    <button id="toggleButton">Mostrar Estados</button>
+    <button id="animalesButton">Animales</button>
         </div>
         <div id="searchResults" class="state-grid"></div>
         
@@ -404,191 +405,251 @@
         </div>
     </div>
 
+    <div id="animalesPopup" class="popup">
+        <div class="popup-content">
+            <div id="allAnimalsList" class="state-grid"></div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const estados = [
-                {id: 1, nombre: 'Aguascalientes', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVitajmxU/0hr6t4KP7Sdih0NFcL--AQ/view?embed', imageUrl: 'img_min/aguascalientes.jpg'},
-                {id: 2, nombre: 'Baja California', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGWL3szGhA/nEM4NueHNtgztMzr2qQ8pA/view?embed', imageUrl: 'img_min/baja-california.jpg'},
-                {id: 3, nombre: 'Baja California Sur', categoria: 'Regina B. & Sophia M.', link: 'https://www.canva.com/design/DAGVi3remq8/QiRmv6kierq5vTTGzvZZgw/view?embed', imageUrl: 'img_min/baja-california-sur.jpg'},
-                {id: 4, nombre: 'Campeche', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVh4H6LRg/OF0oJAZuyvR8Fo51Qpedbw/view?embed', imageUrl: 'img_min/campeche.jpg'},
-                {id: 5, nombre: 'Chiapas', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGViCYWr-U/jVuXCs3aNfD_dW7k9PPP8g/view?embed', imageUrl: 'img_min/chiapas.jpg'},
-                {id: 6, nombre: 'Chihuahua', categoria: 'Lorenza, Ivanna M. & Bernardo', link: 'https://www.canva.com/design/DAGVi2IorOA/_uyeqlriEW6uayp66HW5sA/view?embed', imageUrl: 'img_min/chihuahua.jpg'},
-                {id: 7, nombre: 'Coahuila', categoria: 'Integrantes', link: 'https://example.com/coahuila', imageUrl: 'img_min/coahuila.jpg'},
-                {id: 8, nombre: 'Colima', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVh85PgBc/oj8akq5rdRc3-KQ7jgNg2g/view?embed', imageUrl: 'img_min/colima.jpg'},
-                {id: 9, nombre: 'Durango', categoria: 'Leonardo & Dulce', link: 'https://www.canva.com/design/DAGVi-r64E0/RnzsZFs4cYr0FpsGtdjTXw/view?embed', imageUrl: 'img_min/durango.jpg'},
-                {id: 10, nombre: 'Estado de México', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGViituyMg/z7nfyLJEY-0awBHy9sl9Vw/view?embed', imageUrl: 'img_min/estado-de-méxico.jpg'},
-                {id: 11, nombre: 'Guanajuato', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVjfB_VmY/Iz6cK1DXHdTGxEOKAiWTLw/view?embed', imageUrl: 'img_min/guanajuato.jpg'},
-                {id: 12, nombre: 'Guerrero', categoria: 'Integrantes', link: 'https://example.com/guerrero', imageUrl: 'img_min/guerrero.jpg'},
-                {id: 13, nombre: 'Hidalgo', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVijaL4Pw/7J7f-pCmhLwsYPWAa9wJFA/view?embed', imageUrl: 'img_min/hidalgo.jpg'},
-                {id: 14, nombre: 'Jalisco', categoria: 'Integrantes', link: 'https://example.com/jalisco', imageUrl: 'img_min/jalisco.jpg'},
-                {id: 15, nombre: 'Michoacán', categoria: 'Integrantes', link: 'https://example.com/michoacan', imageUrl: 'img_min/michoacán.jpg'},
-                {id: 16, nombre: 'Morelos', categoria: 'Integrantes', link: 'https://example.com/morelos', imageUrl: 'img_min/morelos.jpg'},
-                {id: 17, nombre: 'Nayarit', categoria: 'Integrantes', link: 'https://example.com/nayarit', imageUrl: 'img_min/nayarit.jpg'},
-                {id: 18, nombre: 'Nuevo León', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVix6AiYw/LA49GHG7gsZKS1V1geXMtw/view?embed', imageUrl: 'img_min/nuevo-león.jpg'},
-                {id: 19, nombre: 'Oaxaca', categoria: 'Integrantes', link: 'https://example.com/oaxaca', imageUrl: 'img_min/oaxaca.jpg'},
-                {id: 20, nombre: 'Puebla', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVikUxi9I/-NDKtQtrZ6olxGYtGKsjkQ/view?embed', imageUrl: 'img_min/puebla.jpg'},
-                {id: 21, nombre: 'Querétaro', categoria: 'Integrantes', link: 'https://example.com/queretaro', imageUrl: 'img_min/querétaro.jpg'},
-                {id: 22, nombre: 'Quintana Roo', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVh1T8Ji4/NNSb3kYLL8dESOwaUlBZ_Q/view?embed', imageUrl: 'img_min/quintana-roo.jpg'},
-                {id: 23, nombre: 'San Luis Potosí', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGViiNeRls/TeIOvBEyQ0IYUd4JtatwQA/view?embed', imageUrl: 'img_min/san-luis-potosí.jpg'},
-                {id: 24, nombre: 'Sinaloa', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGViwiHxaw/Ai45NYhkbfDZrRbKQ3kcPA/view?embed', imageUrl: 'img_min/sinaloa.jpg'},
-                {id: 25, nombre: 'Sonora', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGViwKPNlI/DKEbaHk5OqmMNvMHNiLTTA/view?embed', imageUrl: 'img_min/sonora.jpg'},
-                {id: 26, nombre: 'Tabasco', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVhxXJVsQ/tHp4Qc8MmddIEhV6fnq21A/view?embed', imageUrl: 'img_min/tabasco.jpg'},
-                {id: 27, nombre: 'Tamaulipas', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGWLhW9TNE/frOpgM66ahsgnuutLwLIuA/view?embed', imageUrl: 'img_min/tamaulipas.jpg'},
-                {id: 28, nombre: 'Tlaxcala', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVilRq4yE/v-9lAZsTtgMvgISmPh_rGA/view?embed', imageUrl: 'img_min/tlaxcala.jpg'},
-                {id: 29, nombre: 'Veracruz', categoria: 'Integrantes', link: 'https://example.com/veracruz', imageUrl: 'img_min/veracruz.jpg'},
-                {id: 30, nombre: 'Yucatán', categoria: 'Integrantes', link: 'https://example.com/yucatan', imageUrl: 'img_min/yucatán.jpg'},
-                {id: 31, nombre: 'Zacatecas', categoria: 'Integrantes', link: 'https://www.canva.com/design/DAGVisafNVE/BFmSQzy7rweFn11gJxjBqA/view?embed', imageUrl: 'img_min/zacatecas.jpg'},
-                {id: 32, nombre: 'Ciudad de México', categoria: 'Emilio L. & Felipe', link: 'https://www.canva.com/design/DAGVi6Rn-74/VtXvXMITckm6h_AHurHWAA/view?embed', imageUrl: 'img_min/ciudad-de-méxico.jpg'}
-            ];
+        const estados = [
+        {id: 26, nombre: 'Aguascalientes', categoria: 'Ana Galindo, Thiago Hernández, Constanza Soto & Victor Fuentes', link: 'https://www.canva.com/design/DAGVitajmxU/0hr6t4KP7Sdih0NFcL--AQ/view?embed', imageUrl: 'img_min/aguascalientes.jpg'},
+                {id: 1, nombre: 'Baja California', categoria: 'Sophia Montes, Tadeo Perfecto, Charbel Martínez, Emily Guevara & Regina Becerra', link: 'https://www.canva.com/design/DAGWL3szGhA/nEM4NueHNtgztMzr2qQ8pA/view?embed', imageUrl: 'img_min/baja-california.jpg'},
+                {id: 2, nombre: 'Baja California Sur', categoria: 'Sophia Montes, Tadeo Perfecto, Charbel Martínez, Emily Guevara & Regina Becerra', link: 'https://www.canva.com/design/DAGVi3remq8/QiRmv6kierq5vTTGzvZZgw/view?embed', imageUrl: 'img_min/baja-california-sur.jpg'},
+                {id: 12, nombre: 'Campeche', categoria: 'Elisa Fernández, Mahalakshmi Ahumada, Ivanna Maldonado & Ángel Tovilla', link: 'https://www.canva.com/design/DAGVh4H6LRg/OF0oJAZuyvR8Fo51Qpedbw/view?embed', imageUrl: 'img_min/campeche.jpg'},
+                {id: 16, nombre: 'Chiapas', categoria: 'Emilia Rebolledo, Patricio Copado, Mateo Colomar, Esperanza Morales & Silvanna Vázquez', link: 'https://www.canva.com/design/DAGViCYWr-U/jVuXCs3aNfD_dW7k9PPP8g/view?embed', imageUrl: 'img_min/chiapas.jpg'},
+                {id: 3, nombre: 'Chihuahua', categoria: 'Bernardo Segura, Ivanna Mendo, Daniel Mota & Lorenza López', link: 'https://www.canva.com/design/DAGVi2IorOA/_uyeqlriEW6uayp66HW5sA/view?embed', imageUrl: 'img_min/chihuahua.jpg'},
+                {id: 4, nombre: 'Coahuila', categoria: 'Bernardo Segura, Ivanna Mendo, Daniel Mota & Lorenza López', link: 'https://www.canva.com/design/DAGVi7RGycU/ZXUdFysrBttyAbgull6Mwg/view?embed', imageUrl: 'img_min/coahuila.jpg'},
+                {id: 15, nombre: 'Colima', categoria: 'Elisa Santander, José Luis Azuara, Heidi Wood & Roberto Cagigal', link: 'https://www.canva.com/design/DAGVh85PgBc/oj8akq5rdRc3-KQ7jgNg2g/view?embed', imageUrl: 'img_min/colima.jpg'},
+                {id: 7, nombre: 'Durango', categoria: 'Sebastián Sánchez, Leonardo Rodríguez, Dulce Medina & Sofía Quirarte', link: 'https://www.canva.com/design/DAGVi-r64E0/RnzsZFs4cYr0FpsGtdjTXw/view?embed', imageUrl: 'img_min/durango.jpg'},
+                {id: 32, nombre: 'Estado de México', categoria: 'Maximiliano Muñoz, Victor Arguelles, Carolina Núñez & Ana Navarra', link: 'https://www.canva.com/design/DAGViituyMg/z7nfyLJEY-0awBHy9sl9Vw/view?embed', imageUrl: 'img_min/estado-de-méxico.jpg'},
+                {id: 23, nombre: 'Guanajuato', categoria: 'Ivana García, Ximena Navarro, Iker Durand & Mateo Hernández', link: 'https://www.canva.com/design/DAGVjfB_VmY/Iz6cK1DXHdTGxEOKAiWTLw/view?embed', imageUrl: 'img_min/guanajuato.jpg'},
+                {id: 18, nombre: 'Guerrero', categoria: 'Ana Vélez, Daniel López, Michelle Mora & Mauricio Báez', link: 'https://www.canva.com/design/DAGZeaIfQq8/N_XATZoW6scTHrkw5Sfzmw/view?embed', imageUrl: 'img_min/guerrero.jpg'},
+                {id: 22, nombre: 'Hidalgo', categoria: 'Ivana García, Ximena Navarro, Iker Durand & Mateo Hernández', link: 'https://www.canva.com/design/DAGVijaL4Pw/7J7f-pCmhLwsYPWAa9wJFA/view?embed', imageUrl: 'img_min/hidalgo.jpg'},
+                {id: 24, nombre: 'Jalisco', categoria: 'Manolo Del Castillo, Francisco Valencia, Carmina González, Carlos Tadeo & Ana Aburto', link: 'https://www.canva.com/design/DAGVihQs7W4/QsYJVVgUFtcq7QDW4UIFyQ/view?embed', imageUrl: 'img_min/jalisco.jpg'},
+                {id: 17, nombre: 'Michoacán', categoria: 'Emilia Rebolledo, Patricio Copado, Mateo Colomar, Esperanza Morales & Silvanna Vázquez', link: 'https://www.canva.com/design/DAGViOMywLw/XjgtjSNAYZBbIPK7AOY3IA/view?embed', imageUrl: 'img_min/michoacán.jpg'},
+                {id: 13, nombre: 'Morelos', categoria: 'Elisa Fernández, Mahalakshmi Ahumada, Ivanna Maldonado & Ángel Tovilla', link: 'https://www.canva.com/design/DAGeYsOQk0o/SLVixIiQoTrCf51ZzcDFvA/view?embed', imageUrl: 'img_min/morelos.jpg'},
+                {id: 31, nombre: 'Nayarit', categoria: 'Ana Jácome, Ximena Aguirre, Andrea García, Hanna Wood & Juan Gómez', link: 'https://www.canva.com/design/DAGViuLtMWg/xkznxwjuk_4H5yycb3ruKg/view?embed', imageUrl: 'img_min/nayarit.jpg'},
+                {id: 10, nombre: 'Nuevo León', categoria: 'Alonso Pazzi, Elieth Martínez, Valentina Escalante, Juan Pablo Campos & David Hernández', link: 'https://www.canva.com/design/DAGVix6AiYw/LA49GHG7gsZKS1V1geXMtw/view?embed', imageUrl: 'img_min/nuevo-león.jpg'},
+                {id: 20, nombre: 'Oaxaca', categoria: 'María Rivera, Matías Ruiz, Ana Apan & Pedro García', link: 'https://www.canva.com/design/DAGds47krqo/o6Z3pfmie0CSE-VP0BQGRg/view?embed', imageUrl: 'img_min/oaxaca.jpg'},
+                {id: 25, nombre: 'Puebla', categoria: 'Manolo Del Castillo, Francisco Valencia, Carmina González, Carlos Tadeo & Ana Aburto', link: 'https://www.canva.com/design/DAGVikUxi9I/-NDKtQtrZ6olxGYtGKsjkQ/view?embed', imageUrl: 'img_min/puebla.jpg'},
+                {id: 30, nombre: 'Querétaro', categoria: 'Ana Jácome, Ximena Aguirre, Andrea García, Hanna Wood & Juan Gómez', link: 'https://www.canva.com/design/DAGVio8haDo/UTpQ4d2T5R8ENQPVgQmaKA/view?embed', imageUrl: 'img_min/querétaro.jpg'},
+                {id: 19, nombre: 'Quintana Roo', categoria: 'Ana Vélez, Daniel López, Michelle Mora & Mauricio Báez', link: 'https://www.canva.com/design/DAGVh1T8Ji4/NNSb3kYLL8dESOwaUlBZ_Q/view?embed', imageUrl: 'img_min/quintana-roo.jpg'},
+                {id: 27, nombre: 'San Luis Potosí', categoria: 'Ana Galindo, Thiago Hernández, Constanza Soto & Victor Fuentes', link: 'https://www.canva.com/design/DAGViiNeRls/TeIOvBEyQ0IYUd4JtatwQA/view?embed', imageUrl: 'img_min/san-luis-potosí.jpg'},
+                {id: 6, nombre: 'Sinaloa', categoria: 'Sebastián Sánchez, Leonardo Rodríguez, Dulce Medina & Sofía Quirarte', link: 'https://www.canva.com/design/DAGViwiHxaw/Ai45NYhkbfDZrRbKQ3kcPA/view?embed', imageUrl: 'img_min/sinaloa.jpg'},
+                {id: 5, nombre: 'Sonora', categoria: 'Max Cuevas, Regina Castillo, Rodrigo Alejo & Eugenia Viveros', link: 'https://www.canva.com/design/DAGVix91ZMw/IjtVy6dtZtPbAQBw8aJVhw/view?embed', imageUrl: 'img_min/sonora.jpg'},
+                {id: 14, nombre: 'Tabasco', categoria: 'Elisa Santander, José Luis Azuara, Heidi Wood & Roberto Cagigal', link: 'https://www.canva.com/design/DAGVhxXJVsQ/tHp4Qc8MmddIEhV6fnq21A/view?embed', imageUrl: 'img_min/tabasco.jpg'},
+                {id: 11, nombre: 'Tamaulipas', categoria: 'Alonso Pazzi, Elieth Martínez, Valentina Escalante, Juan Pablo Campos & David Hernández', link: 'https://www.canva.com/design/DAGWLhW9TNE/frOpgM66ahsgnuutLwLIuA/view?embed', imageUrl: 'img_min/tamaulipas.jpg'},
+                {id: 28, nombre: 'Tlaxcala', categoria: 'Greta Murillo, Jenifer Oliva, Mikel Arduengo & Ian Pale', link: 'https://www.canva.com/design/DAGVilRq4yE/v-9lAZsTtgMvgISmPh_rGA/view?embed', imageUrl: 'img_min/tlaxcala.jpg'},
+                {id: 8, nombre: 'Veracruz', categoria: 'Felipe Ruiz, Ava Pardo, Emilio Limón & Ana Fer Piñero', link: 'https://www.canva.com/design/DAGViwNa4WM/MFua_QSqET3uvtc6Y9A-EA/view?embed', imageUrl: 'img_min/veracruz.jpg'},
+                {id: 21, nombre: 'Yucatán', categoria: 'Helena Medrano, Daniel Saucedo, José Luis Oliva, Lucas Ramírez & Miranda Sobrino', link: 'https://www.canva.com/design/DAGds1a8gzo/lwlxgJ_upw6NmieHU8a2Aw/view?embed', imageUrl: 'img_min/yucatán.jpg'},
+                {id: 29, nombre: 'Zacatecas', categoria: 'Greta Murillo, Jenifer Oliva, Mikel Arduengo & Ian Pale', link: 'https://www.canva.com/design/DAGVisafNVE/BFmSQzy7rweFn11gJxjBqA/view?embed', imageUrl: 'img_min/zacatecas.jpg'},
+                {id: 9, nombre: 'Ciudad de México', categoria: 'Emilio L. & Felipe', link: 'https://www.canva.com/design/DAGVi6Rn-74/VtXvXMITckm6h_AHurHWAA/view?embed', imageUrl: 'img_min/ciudad-de-méxico.jpg'}
+        ];
 
-            const searchInput = document.getElementById('searchInput');
-            const toggleButton = document.getElementById('toggleButton');
-            const allStatesList = document.getElementById('allStatesList');
-            const searchResults = document.getElementById('searchResults');
-            const stateInfo = document.getElementById('stateInfo');
-            const statePopup = document.getElementById('statePopup');
-            const stateIFrame = stateInfo.querySelector("iframe");
-            const showOnMapButton = document.getElementById('showOnMap');
-            const clearSearchButton = document.getElementById('clearSearchButton');
-            let currentStateId = null;
+        // estados object
 
-            // Mostrar el botón "X" cuando hay texto en el campo
-            searchInput.addEventListener('input', function() {
-                if (this.value) {
-                    clearSearchButton.style.display = 'block'; // Mostrar el botón
-                } else {
-                    clearSearchButton.style.display = 'none'; // Ocultar el botón
-                }
-            });
+        const animales = [
+            {id: 1, nombre: 'Ballena Azul', categoria: 'Equipo 1', imageUrl: 'img/animales/4A-EQUIPO1-BALLENAAZUL.jpg'},
+            {id: 2, nombre: 'Oso Negro', categoria: 'Equipo 2', imageUrl: 'img/animales/4A-EQUIPO2-OSONEGRO.jpg'},
+            {id: 3, nombre: 'Perrito Prad', categoria: 'Equipo 3', imageUrl: 'img/animales/4A-EQUIPO3-PERRITOPRAD.jpg'},
+            {id: 4, nombre: 'Puma Con Color', categoria: 'Equipo 4', imageUrl: 'img/animales/4A-EQUIPO4-PUMACONCOLOR.jpg'},
+            {id: 5, nombre: 'Ocelote', categoria: 'Equipo 5', imageUrl: 'img/animales/4A-EQUIPO5-OCELOTE.jpg'},
+            {id: 6, nombre: 'Cotorro', categoria: 'Equipo 6', imageUrl: 'img/animales/4A-EQUIPO6-COTORRO.jpg'},
+            {id: 7, nombre: 'Nutria', categoria: 'Equipo 1', imageUrl: 'img/animales/4B-EQUIPO1-Nutria.jpg'},
+            {id: 8, nombre: 'Puma del desierto', categoria: 'Equipo 2', imageUrl: 'img/animales/4B-EQUIPO2-Puma del desierto.jpg'},
+            {id: 9, nombre: 'Jaguar', categoria: 'Equipo 3', imageUrl: 'img/animales/4B-EQUIPO3-Jaguar.jpg'},
+            {id: 10, nombre: 'Zorro gris', categoria: 'Equipo 4', imageUrl: 'img/animales/4B-EQUIPO4-Zorro gris.jpg'},
+            {id: 11, nombre: 'Gato Montés', categoria: 'Equipo 5', imageUrl: 'img/animales/4B-EQUIPO5-Gato Montés.jpg'},
+            {id: 12, nombre: 'Ajolote', categoria: 'Equipo 6', imageUrl: 'img/animales/4B-EQUIPO6-Ajolote.jpg'},
+            {id: 13, nombre: 'Mono aullador', categoria: 'Equipo 1', imageUrl: 'img/animales/4C-EQUIPO1-Mono aullador.jpg'},
+            {id: 14, nombre: 'Puercoespin', categoria: 'Equipo 2', imageUrl: 'img/animales/4C-EQUIPO2-Puercoespin.jpg'},
+            {id: 15, nombre: 'Quetzal', categoria: 'Equipo 3', imageUrl: 'img/animales/4C-EQUIPO3-Quetzal.jpg'},
+            {id: 16, nombre: 'Cangrejo azul', categoria: 'Equipo 4', imageUrl: 'img/animales/4C-EQUIPO4-Cangrejo azul.jpg'},
+            {id: 17, nombre: 'Tortuga', categoria: 'Equipo 5', imageUrl: 'img/animales/4C-EQUIPO5-Tortuga.jpg'},
+            {id: 18, nombre: 'Coati', categoria: 'Equipo 6', imageUrl: 'img/animales/4C-EQUIPO6-Coati.jpg'}
+        ];
 
-            // Limpiar el campo de búsqueda al hacer clic en "X"
-            clearSearchButton.addEventListener('click', function() {
-                searchInput.value = ''; // Limpiar el texto
-                this.style.animation = 'hide 0.3s forwards'; // Agregar animación de ocultar
-                setTimeout(() => {
-                    this.style.display = 'none'; // Ocultar después de la animación
-                }, 300);
-                searchInput.focus(); // Regresar el foco al input
-                searchStates(); // Llamar a la función para actualizar la lista de estados
-            });
+        const searchInput = document.getElementById('searchInput');
+        const toggleButton = document.getElementById('toggleButton');
+        const animalesButton = document.getElementById('animalesButton');
+        const allStatesList = document.getElementById('allStatesList');
+        const allAnimalsList = document.getElementById('allAnimalsList');
+        const searchResults = document.getElementById('searchResults');
+        const stateInfo = document.getElementById('stateInfo');
+        const statePopup = document.getElementById('statePopup');
+        const animalesPopup = document.getElementById('animalesPopup');
+        const stateIFrame = stateInfo.querySelector("iframe");
+        const showOnMapButton = document.getElementById('showOnMap');
+        const clearSearchButton = document.getElementById('clearSearchButton');
+        let currentStateId = null;
 
-            function adjustClearButtonPosition() {
-                const inputWidth = searchInput.clientWidth; // Obtener el ancho del input
-                clearSearchButton.style.left = `${inputWidth - 25}px`; // Ajustar espacio para el botón "X"
+        // Mostrar el botón "X" cuando hay texto en el campo
+        searchInput.addEventListener('input', function() {
+            if (this.value) {
+                clearSearchButton.style.display = 'block'; // Mostrar el botón
+            } else {
+                clearSearchButton.style.display = 'none'; // Ocultar el botón
             }
+        });
 
-            // Llama a esta función al cambiar el tamaño del input
-            searchInput.addEventListener('input', function() {
-                if (this.value) {
-                    clearSearchButton.style.display = 'block'; // Mostrar el botón
-                    clearSearchButton.style.opacity = 1; // Preparar para la animación
-                    clearSearchButton.style.animation = 'show 0.3s forwards'; // Agregar animación
-                } else {
-                    clearSearchButton.style.animation = 'hide 0.3s forwards'; // Agregar animación de ocultar
-                    setTimeout(() => {
-                        clearSearchButton.style.display = 'none'; // Ocultar después de la animación
-                    }, 300);
-                }
-                adjustClearButtonPosition(); // Ajustar la posición con cada entrada
-            });
+        // Limpiar el campo de búsqueda al hacer clic en "X"
+        clearSearchButton.addEventListener('click', function() {
+            searchInput.value = ''; // Limpiar el texto
+            this.style.animation = 'hide 0.3s forwards'; // Agregar animación de ocultar
+            setTimeout(() => {
+                this.style.display = 'none'; // Ocultar después de la animación
+            }, 300);
+            searchInput.focus(); // Regresar el foco al input
+            searchStates(); // Llamar a la función para actualizar la lista de estados
+        });
+
+        function adjustClearButtonPosition() {
+            const inputWidth = searchInput.clientWidth; // Obtener el ancho del input
+            clearSearchButton.style.left = `${inputWidth - 25}px`; // Ajustar espacio para el botón "X"
+        }
+
+        // Llama a esta función al cambiar el tamaño del input
+        searchInput.addEventListener('input', function() {
+            if (this.value) {
+                clearSearchButton.style.display = 'block'; // Mostrar el botón
+                clearSearchButton.style.opacity = 1; // Preparar para la animación
+                clearSearchButton.style.animation = 'show 0.3s forwards'; // Agregar animación
+            } else {
+                clearSearchButton.style.animation = 'hide 0.3s forwards'; // Agregar animación de ocultar
+                setTimeout(() => {
+                    clearSearchButton.style.display = 'none'; // Ocultar después de la animación
+                }, 300);
+            }
+            adjustClearButtonPosition(); // Ajustar la posición con cada entrada
+        });
 
 
             // También ajusta la posición al cargar
-            window.addEventListener('load', adjustClearButtonPosition);
+        window.addEventListener('load', adjustClearButtonPosition);
 
-            function renderStateList(states, container) {
-                container.innerHTML = '';
-                states.forEach(state => {
-                    const card = document.createElement('div');
-                    card.className = 'state-card';
-                    card.innerHTML = `
-                        <img src="${state.imageUrl}" alt="${state.nombre}" class="state-image">
-                        <div class="state-info">
-                            <h3 class="state-name">${state.nombre}</h3>
-                            <p class="state-category">${state.categoria}</p>
-                        </div>
-                    `;
-                    card.addEventListener('click', () => selectState(state));
-                    container.appendChild(card);
-                });
+        function renderStateList(states, container) {
+            container.innerHTML = '';
+            states.forEach(state => {
+                const card = document.createElement('div');
+                card.className = 'state-card';
+                card.innerHTML = `
+                    <img src="${state.imageUrl}" alt="${state.nombre}" class="state-image">
+                    <div class="state-info">
+                        <h3 class="state-name">${state.nombre}</h3>
+                        <p class="state-category">${state.categoria}</p>
+                    </div>
+                `;
+                card.addEventListener('click', () => selectState(state));
+                container.appendChild(card);
+            });
+        }
+
+        function renderAnimalList(animals, container) {
+            container.innerHTML = '';
+            animals.forEach(animal => {
+                const card = document.createElement('div');
+                card.className = 'state-card';
+                card.innerHTML = `
+                    <img src="${animal.imageUrl}" alt="${animal.nombre}" class="state-image">
+                    <div class="state-info">
+                        <h3 class="state-name">${animal.nombre}</h3>
+                        <p class="state-category">${animal.categoria}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectState(state) {
+            loadStateHTML(state.link);
+            currentStateId = state.id;
+            updateShowOnMapButton(state.nombre);
+            stateInfo.style.display = 'block'; // Mostrar el div stateInfo
+            closePopup();
+        }
+
+        function loadStateHTML(link) {
+            stateIFrame.src = link;
+            // Mostrar el cargador antes de iniciar la carga del iframe
+            const loader = document.getElementById('placeholder');
+            loader.style.display = 'block'; // Mostrar cargador
+        }
+
+        function onIframeLoad() {
+            const loader = document.getElementById('placeholder');
+            loader.style.display = 'none'; // Ocultar cargador
+            console.log("iframe Loaded"); // Para depuración
+        }
+            // Asigna el manejador de evento onload para el iframe
+        stateIFrame.onload = onIframeLoad;
+
+        function updateShowOnMapButton(stateName) {
+            showOnMapButton.textContent = `Mostrar ${stateName} en el Mapa`;
+            showOnMapButton.style.display = 'block';
+        }
+
+        async function updateEstadoMapa() {
+            const response = await fetch('estadoMapa.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ estadoId: currentStateId })
+            });
+            const result = await response.json();
+            if (result.success) {
+                console.log(`Estado del mapa actualizado: ${currentStateId}`);
+            } else {
+                console.error('Error al actualizar el estado del mapa', result.message);
             }
+        }
+        showOnMapButton.addEventListener('click', updateEstadoMapa);
 
-            function selectState(state) {
-                loadStateHTML(state.link);
-                currentStateId = state.id;
-                updateShowOnMapButton(state.nombre);
-                stateInfo.style.display = 'block'; // Mostrar el div stateInfo
+        function searchStates() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredStates = estados.filter(state => 
+                state.nombre.toLowerCase().includes(searchTerm)
+            );
+            renderStateList(filteredStates, searchResults);
+            searchResults.style.display = searchTerm ? 'grid' : 'none';
+        }
+
+        function togglePopup(popupId) {
+            const popup = document.getElementById(popupId);
+            popup.style.display = popup.style.display === 'none' ? 'block' : 'none';
+            const button = document.getElementById(`${popupId.slice(0, -6)}Button`);
+            button.textContent = popup.style.display === 'none' ? `Mostrar ${popupId.slice(0, -6)}` : `Ocultar ${popupId.slice(0, -6)}`;
+        }
+
+        function closePopup() {
+            statePopup.style.display = 'none';
+            toggleButton.textContent = 'Mostrar Estados';
+            animalesPopup.style.display = 'none';
+            animalesButton.textContent = 'Animales';
+        }
+
+        toggleButton.addEventListener('click', () => togglePopup('statePopup'));
+        animalesButton.addEventListener('click', () => togglePopup('animalesPopup'));
+        searchInput.addEventListener('input', searchStates);
+        statePopup.addEventListener('click', (e) => {
+            if (e.target === statePopup) {
                 closePopup();
             }
-
-            function loadStateHTML(link) {
-                stateIFrame.src = link;
-                // Mostrar el cargador antes de iniciar la carga del iframe
-                const loader = document.getElementById('placeholder');
-                loader.style.display = 'block'; // Mostrar cargador
+        });
+        animalesPopup.addEventListener('click', (e) => {
+            if (e.target === animalesPopup) {
+                closePopup();
             }
+        });
 
-            function onIframeLoad() {
-                const loader = document.getElementById('placeholder');
-                loader.style.display = 'none'; // Ocultar cargador
-                console.log("iframe Loaded"); // Para depuración
-            }
-            // Asigna el manejador de evento onload para el iframe
-            stateIFrame.onload = onIframeLoad;
-
-            function updateShowOnMapButton(stateName) {
-                showOnMapButton.textContent = `Mostrar ${stateName} en el Mapa`;
-                showOnMapButton.style.display = 'block';
-            }
-
-            async function updateEstadoMapa() {
-                const response = await fetch('estadoMapa.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ estadoId: currentStateId })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    console.log(`Estado del mapa actualizado: ${currentStateId}`);
-                } else {
-                    console.error('Error al actualizar el estado del mapa', result.message);
-                }
-            }
-            showOnMapButton.addEventListener('click', updateEstadoMapa);
-            function searchStates() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const filteredStates = estados.filter(state => 
-                    state.nombre.toLowerCase().includes(searchTerm)
-                );
-                renderStateList(filteredStates, searchResults);
-                searchResults.style.display = searchTerm ? 'grid' : 'none';
-            }
-
-            function togglePopup() {
-                statePopup.style.display = statePopup.style.display === 'none' ? 'block' : 'none';
-                toggleButton.textContent = statePopup.style.display === 'none' ? 'Mostrar Estados' : 'Ocultar Estados';
-            }
-
-            function closePopup() {
-                statePopup.style.display = 'none';
-                toggleButton.textContent = 'Mostrar Estados';
-            }
-
-            toggleButton.addEventListener('click', togglePopup);
-            searchInput.addEventListener('input', searchStates);
-            statePopup.addEventListener('click', (e) => {
-                if (e.target === statePopup) {
-                    closePopup();
-                }
-            });
-
-            renderStateList(estados, allStatesList);
-            stateIFrame.src = '';
-            statePopup.style.display = 'none';
-            searchResults.style.display = 'none';
+        renderStateList(estados, allStatesList);
+        renderAnimalList(animales, allAnimalsList);
+        stateIFrame.src = '';
+        statePopup.style.display = 'none';
+        animalesPopup.style.display = 'none';
+        searchResults.style.display = 'none';
         });
     </script>
     <!-- Codigo de la función para actualizar el estado del mapa -->
