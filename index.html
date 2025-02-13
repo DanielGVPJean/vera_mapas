@@ -386,7 +386,7 @@
             <input type="text" id="searchInput" placeholder="Buscar un estado..." style="padding-right: 40px;"> <!-- Aumentar el padding derecho para el botón "X" -->
             <button id="clearSearchButton">&times;</button> <!-- Botón de limpiar como X -->
     <button id="toggleButton">Mostrar Estados</button>
-    <button id="animalesButton">Proyecto de Arte</button>
+    <button id="arteButton">Proyecto de Arte</button>
         </div>
         <div id="searchResults" class="state-grid"></div>
         
@@ -405,9 +405,9 @@
         </div>
     </div>
 
-    <div id="animalesPopup" class="popup">
+    <div id="artsPopup" class="popup">
         <div class="popup-content">
-            <div id="allAnimalsList" class="state-grid"></div>
+            <div id="allArtsList" class="state-grid"></div>
         </div>
     </div>
 
@@ -451,7 +451,7 @@
 
         // estados object
 
-        const animales = [
+        const art = [
             {id: 1, nombre: 'Ballena Azul', categoria: '4A -Equipo 1', imageUrl: 'img/animales/4A-EQUIPO1-BALLENAAZUL.jpg'},
             {id: 2, nombre: 'Oso Negro', categoria: '4A - Equipo 2', imageUrl: 'img/animales/4A-EQUIPO2-OSONEGRO.jpg'},
             {id: 3, nombre: 'Perrito de la Pradera', categoria: '4A - Equipo 3', imageUrl: 'img/animales/4A-EQUIPO3-PERRITOPRAD.jpg'},
@@ -474,13 +474,13 @@
 
         const searchInput = document.getElementById('searchInput');
         const toggleButton = document.getElementById('toggleButton');
-        const animalesButton = document.getElementById('animalesButton');
+        const arteButton = document.getElementById('arteButton');
         const allStatesList = document.getElementById('allStatesList');
-        const allAnimalsList = document.getElementById('allAnimalsList');
+        const allArtsList = document.getElementById('allArtsList');
         const searchResults = document.getElementById('searchResults');
         const stateInfo = document.getElementById('stateInfo');
         const statePopup = document.getElementById('statePopup');
-        const animalesPopup = document.getElementById('animalesPopup');
+        const artsPopup = document.getElementById('artsPopup');
         const stateIFrame = stateInfo.querySelector("iframe");
         const showOnMapButton = document.getElementById('showOnMap');
         const clearSearchButton = document.getElementById('clearSearchButton');
@@ -627,29 +627,29 @@
         function closePopup() {
             statePopup.style.display = 'none';
             toggleButton.textContent = 'Mostrar Estados';
-            animalesPopup.style.display = 'none';
-            animalesButton.textContent = 'Proyecto de Arte';
+            artsPopup.style.display = 'none';
+            arteButton.textContent = 'Proyecto de Arte';
         }
 
         toggleButton.addEventListener('click', () => togglePopup('statePopup'));
-        animalesButton.addEventListener('click', () => togglePopup('animalesPopup'));
+        arteButton.addEventListener('click', () => togglePopup('artsPopup'));
         searchInput.addEventListener('input', searchStates);
         statePopup.addEventListener('click', (e) => {
             if (e.target === statePopup) {
                 closePopup();
             }
         });
-        animalesPopup.addEventListener('click', (e) => {
-            if (e.target === animalesPopup) {
+        artsPopup.addEventListener('click', (e) => {
+            if (e.target === artsPopup) {
                 closePopup();
             }
         });
 
         renderStateList(estados, allStatesList);
-        renderAnimalList(animales, allAnimalsList);
+        renderAnimalList(art, allArtsList);
         stateIFrame.src = '';
         statePopup.style.display = 'none';
-        animalesPopup.style.display = 'none';
+        artsPopup.style.display = 'none';
         searchResults.style.display = 'none';
         });
     </script>
