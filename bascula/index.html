@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Monitor Serial</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #352e2e;
+      font-family: monospace;
+      color: rgb(60, 255, 1);
+      margin: 0;
+      padding: 10px;
+    }
+    button {
+      background-color: rgb(85, 85, 85);
+      color: white;
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .terminal {
+      font-family: monospace;
+      white-space: pre-wrap;
+      height: 300px;
+      width: 100%;
+      border: 1px solid #696;
+      overflow-y: auto;
+      background-color: rgb(88, 92, 92);
+      padding: 10px;
+      margin-top: 10px;
+    }
+    h1, h2 {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Monitor Serial</h1>
+  <!-- Botones para conectar cada dispositivo -->
+  <button onclick="connectMicro()">Conectar Microbit (115200)</button>
+  <button onclick="connectArduino()">Conectar Arduino (9600)</button>
+
+  <!-- Contenedores para mostrar la información -->
+  <h2>Datos Microbit</h2>
+  <div id="microResults" class="terminal"></div>
+  
+  <h2>Datos Arduino</h2>
+  <div id="arduinoResults" class="terminal"></div>
+
+  <script>
+    let portMicro;
+    let portArduino;
+
+    // Conecta el micro:bit a 115200 baudios
+    async function connectMicro() {
+      try {
+        portMicro = await navigator.serial.requestPort();
+        await portMicro.open({ baudRate: 115200 });
+        listenToPort(portMicro, 'microResults');
+      } catch (error) {
+        alert("Error conectando al Microbit: " + error);
+      }
+    }
+
+    // Conecta el Arduino a 9600 baudios
+    async function connectArduino() {
+      try {
+        portArduino = await navigator.serial.requestPort();
+        await portArduino.open({ baudRate: 9600 });
+        listenToPort(portArduino, 'arduinoResults');
+      } catch (error) {
+        alert("Error conectando al Arduino: " + error);
+      }
+    }
+
+    // Función genérica para leer datos del puerto y mostrarlos en el contenedor indicado
+    async function listenToPort(port, containerId) {
+      const textDecoder = new TextDecoderStream();
+      port.readable.pipeTo(textDecoder.writable);
+      const reader = textDecoder.readable.getReader();
+      const container = document.getElementById(containerId);
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) {
+            reader.releaseLock();
+            break;
+          }
+          if (value) {
+            container.innerHTML += value;
+            container.scrollTop = container.scrollHeight;
+          }
+        }
+      } catch (error) {
+        console.error("Error leyendo desde el puerto: ", error);
+      }
+    }
+  </script>
+</body>
+</html>
